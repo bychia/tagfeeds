@@ -1,5 +1,3 @@
-var backendURL = "http://chrischia.info:3000/newsBing";
-
 var dateCooked = function(pubDateStr){
   var pubDate = new Date(pubDateStr);
   var currentDate = new Date();
@@ -14,7 +12,7 @@ var dateCooked = function(pubDateStr){
     return pubDate.toLocaleDateString();
   }
 }
-
+var backendURL = "http://chrischia.info:3000/newsBing";
 var TableBox = React.createClass({
   getInitialState: function() {
     return {data:undefined};
@@ -26,8 +24,7 @@ var TableBox = React.createClass({
       cache: true,
       timeout: 5000,
       success: function(data) {
-        var news = data[0];
-        this.setState({data:news});
+        this.setState({data:data});
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -41,62 +38,120 @@ var TableBox = React.createClass({
     if(this.state.data==undefined){
       return (
         <div>
-          <div id="newsBg"></div>
         </div>
       );
     }else{
-      var imageUrl = this.state.data.image;
-      var newsBgStyle = {
-        background: 'url("'+imageUrl+'")'
-      };
+      var dataCount = this.state.data.length;
+      var carouselIndicators = [];
+      for (var i=0; i <dataCount; i++) {
+        var carouselIndicatorsClassName = (i==0)? "active":"";
+        var carouselIndicatorsKeyId = "carouselIndicatorsKeyId"+i;
+        carouselIndicators.push(<li data-target="#carousel-example-generic" data-slide-to={i} className={carouselIndicatorsClassName} key={carouselIndicatorsKeyId}></li>);
+      }
+
+      var carouselInner = [];
+      for (var i=0; i < dataCount; i++) {
+          var carouselInnerDivClassName = (i==0)? "item active":"item";
+          var parentDivId = "carouselInnerParentDivId"+i
+          var imageId = "carouselInnerImageId"+i;
+          var divId = "carouselInnerDivId"+i;
+          var newsBgId = "carouselInnerNewsBg"+i;
+          var blackOverlayId = "carouselInnerBlackOverlay"+i;
+          var newsBgStyle = {
+            background: 'url("'+this.state.data[i].image+'")'
+          };
+
+          carouselInner.push(<div className={carouselInnerDivClassName} key={parentDivId}>
+            <img src="images/spacer.png" height="100%" width="100%" key={imageId}/>
+            <div key={divId}>
+              <div id="newsBg" style={newsBgStyle} key={newsBgId}/>
+              <div id="blackOverlay" key={blackOverlayId}/>
+            </div>
+          </div>);
+      }
+
       return (
         <div>
-          <div id="newsBg" style={newsBgStyle}></div>
-          <div id="blackOverlay"></div>
+          <div id="carousel-example-generic" className="carousel slide" data-ride="carousel"  data-interval="false">
+            <ol className='carousel-indicators'>
+              {carouselIndicators}
+            </ol>
+            <div className="carousel-inner" role="listbox">
+              {carouselInner}
+            </div>
+          </div>
           <NewsBox data={this.state.data} />
         </div>
-      );
+      )
     }
   }
 });
 
 var NewsBox = React.createClass({
+  getPreviousData : function(){
+    var previousIndex = this.state.index-1;
+    previousIndex = (previousIndex<0)? this.props.data.length-1: previousIndex;
+    this.setState({index:previousIndex, currentData:this.props.data[previousIndex]});
+  },
+  getNextData : function(){
+    var nextIndex = this.state.index+1;
+    nextIndex = (nextIndex==this.props.data.length)? 0: nextIndex;
+    this.setState({index:nextIndex, currentData:this.props.data[nextIndex]});
+  },
   getInitialState: function() {
-    return {date:dateCooked(this.props.data.pubDate)};
+    return {index:0, currentData:this.props.data[0]};
   },
   render: function() {
     return (
+      <div>
       <div id="newsFg">
         <table id="news">
+          <colgroup>
+            <col width="15px"/>
+            <col width="auto"/>
+            <col width="15px"/>
+          </colgroup>
           <tbody>
             <tr>
+              <td></td>
               <td id="logoRow">
                 <img src="images/logoTfMed.png"/>
               </td>
+              <td></td>
             </tr>
             <tr id="newsSection">
+              <td>
+                <span className="glyphicon glyphicon-chevron-left glyphicon-padding" aria-hidden="true"></span>
+              </td>
               <td id="newsRow">
                 <div>
                   <span id="newsTitle">
-                    {this.props.data.title}
+                    {this.state.currentData.title}
                   </span>
                   <br/>
                   <span id="newsSrc">
-                    {this.props.data.newsSrc}
+                    {this.state.currentData.newsSrc}
                   </span>
-                  <span id="newsDate" > - {this.state.date}
+                  <span id="newsDate" > - {dateCooked(this.state.currentData.pubDate)}
                   </span>
                   <br/>
                   <span id="newsBody">
-                    {this.props.data.description}
+                    {this.state.currentData.description}
                   </span>
                   <br/>
                   <span id="apiProvider"><img src="images/brandBing.png"/></span>
                 </div>
               </td>
+              <td>
+                <span className="glyphicon glyphicon-chevron-right glyphicon-padding" aria-hidden="true"></span>
+              </td>
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <a className="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev" onClick={this.getPreviousData} />
+      <a className="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next" onClick={this.getNextData} />
       </div>
     );
   }

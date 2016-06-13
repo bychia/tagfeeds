@@ -1,7 +1,5 @@
 "use strict";
 
-var backendURL = "http://chrischia.info:3000/newsBing";
-
 var dateCooked = function dateCooked(pubDateStr) {
   var pubDate = new Date(pubDateStr);
   var currentDate = new Date();
@@ -19,7 +17,7 @@ var dateCooked = function dateCooked(pubDateStr) {
     return pubDate.toLocaleDateString();
   }
 };
-
+var backendURL = "http://chrischia.info:3000/newsBing";
 var TableBox = React.createClass({
   displayName: "TableBox",
 
@@ -33,8 +31,7 @@ var TableBox = React.createClass({
       cache: true,
       timeout: 5000,
       success: function (data) {
-        var news = data[0];
-        this.setState({ data: news });
+        this.setState({ data: data });
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -46,21 +43,58 @@ var TableBox = React.createClass({
   },
   render: function render() {
     if (this.state.data == undefined) {
-      return React.createElement(
-        "div",
-        null,
-        React.createElement("div", { id: "newsBg" })
-      );
+      return React.createElement("div", null);
     } else {
-      var imageUrl = this.state.data.image;
-      var newsBgStyle = {
-        background: 'url("' + imageUrl + '")'
-      };
+      var dataCount = this.state.data.length;
+      var carouselIndicators = [];
+      for (var i = 0; i < dataCount; i++) {
+        var carouselIndicatorsClassName = i == 0 ? "active" : "";
+        var carouselIndicatorsKeyId = "carouselIndicatorsKeyId" + i;
+        carouselIndicators.push(React.createElement("li", { "data-target": "#carousel-example-generic", "data-slide-to": i, className: carouselIndicatorsClassName, key: carouselIndicatorsKeyId }));
+      }
+
+      var carouselInner = [];
+      for (var i = 0; i < dataCount; i++) {
+        var carouselInnerDivClassName = i == 0 ? "item active" : "item";
+        var parentDivId = "carouselInnerParentDivId" + i;
+        var imageId = "carouselInnerImageId" + i;
+        var divId = "carouselInnerDivId" + i;
+        var newsBgId = "carouselInnerNewsBg" + i;
+        var blackOverlayId = "carouselInnerBlackOverlay" + i;
+        var newsBgStyle = {
+          background: 'url("' + this.state.data[i].image + '")'
+        };
+
+        carouselInner.push(React.createElement(
+          "div",
+          { className: carouselInnerDivClassName, key: parentDivId },
+          React.createElement("img", { src: "images/spacer.png", height: "100%", width: "100%", key: imageId }),
+          React.createElement(
+            "div",
+            { key: divId },
+            React.createElement("div", { id: "newsBg", style: newsBgStyle, key: newsBgId }),
+            React.createElement("div", { id: "blackOverlay", key: blackOverlayId })
+          )
+        ));
+      }
+
       return React.createElement(
         "div",
         null,
-        React.createElement("div", { id: "newsBg", style: newsBgStyle }),
-        React.createElement("div", { id: "blackOverlay" }),
+        React.createElement(
+          "div",
+          { id: "carousel-example-generic", className: "carousel slide", "data-ride": "carousel", "data-interval": "false" },
+          React.createElement(
+            "ol",
+            { className: "carousel-indicators" },
+            carouselIndicators
+          ),
+          React.createElement(
+            "div",
+            { className: "carousel-inner", role: "listbox" },
+            carouselInner
+          )
+        ),
         React.createElement(NewsBox, { data: this.state.data })
       );
     }
@@ -70,71 +104,106 @@ var TableBox = React.createClass({
 var NewsBox = React.createClass({
   displayName: "NewsBox",
 
+  getPreviousData: function getPreviousData() {
+    var previousIndex = this.state.index - 1;
+    previousIndex = previousIndex < 0 ? this.props.data.length - 1 : previousIndex;
+    this.setState({ index: previousIndex, currentData: this.props.data[previousIndex] });
+  },
+  getNextData: function getNextData() {
+    var nextIndex = this.state.index + 1;
+    nextIndex = nextIndex == this.props.data.length ? 0 : nextIndex;
+    this.setState({ index: nextIndex, currentData: this.props.data[nextIndex] });
+  },
   getInitialState: function getInitialState() {
-    return { date: dateCooked(this.props.data.pubDate) };
+    return { index: 0, currentData: this.props.data[0] };
   },
   render: function render() {
     return React.createElement(
       "div",
-      { id: "newsFg" },
+      null,
       React.createElement(
-        "table",
-        { id: "news" },
+        "div",
+        { id: "newsFg" },
         React.createElement(
-          "tbody",
-          null,
+          "table",
+          { id: "news" },
           React.createElement(
-            "tr",
+            "colgroup",
             null,
-            React.createElement(
-              "td",
-              { id: "logoRow" },
-              React.createElement("img", { src: "images/logoTfMed.png" })
-            )
+            React.createElement("col", { width: "15px" }),
+            React.createElement("col", { width: "auto" }),
+            React.createElement("col", { width: "15px" })
           ),
           React.createElement(
-            "tr",
-            { id: "newsSection" },
+            "tbody",
+            null,
             React.createElement(
-              "td",
-              { id: "newsRow" },
+              "tr",
+              null,
+              React.createElement("td", null),
               React.createElement(
-                "div",
+                "td",
+                { id: "logoRow" },
+                React.createElement("img", { src: "images/logoTfMed.png" })
+              ),
+              React.createElement("td", null)
+            ),
+            React.createElement(
+              "tr",
+              { id: "newsSection" },
+              React.createElement(
+                "td",
                 null,
+                React.createElement("span", { className: "glyphicon glyphicon-chevron-left glyphicon-padding", "aria-hidden": "true" })
+              ),
+              React.createElement(
+                "td",
+                { id: "newsRow" },
                 React.createElement(
-                  "span",
-                  { id: "newsTitle" },
-                  this.props.data.title
-                ),
-                React.createElement("br", null),
-                React.createElement(
-                  "span",
-                  { id: "newsSrc" },
-                  this.props.data.newsSrc
-                ),
-                React.createElement(
-                  "span",
-                  { id: "newsDate" },
-                  " - ",
-                  this.state.date
-                ),
-                React.createElement("br", null),
-                React.createElement(
-                  "span",
-                  { id: "newsBody" },
-                  this.props.data.description
-                ),
-                React.createElement("br", null),
-                React.createElement(
-                  "span",
-                  { id: "apiProvider" },
-                  React.createElement("img", { src: "images/brandBing.png" })
+                  "div",
+                  null,
+                  React.createElement(
+                    "span",
+                    { id: "newsTitle" },
+                    this.state.currentData.title
+                  ),
+                  React.createElement("br", null),
+                  React.createElement(
+                    "span",
+                    { id: "newsSrc" },
+                    this.state.currentData.newsSrc
+                  ),
+                  React.createElement(
+                    "span",
+                    { id: "newsDate" },
+                    " - ",
+                    dateCooked(this.state.currentData.pubDate)
+                  ),
+                  React.createElement("br", null),
+                  React.createElement(
+                    "span",
+                    { id: "newsBody" },
+                    this.state.currentData.description
+                  ),
+                  React.createElement("br", null),
+                  React.createElement(
+                    "span",
+                    { id: "apiProvider" },
+                    React.createElement("img", { src: "images/brandBing.png" })
+                  )
                 )
+              ),
+              React.createElement(
+                "td",
+                null,
+                React.createElement("span", { className: "glyphicon glyphicon-chevron-right glyphicon-padding", "aria-hidden": "true" })
               )
             )
           )
         )
-      )
+      ),
+      React.createElement("a", { className: "left carousel-control", href: "#carousel-example-generic", role: "button", "data-slide": "prev", onClick: this.getPreviousData }),
+      React.createElement("a", { className: "right carousel-control", href: "#carousel-example-generic", role: "button", "data-slide": "next", onClick: this.getNextData })
     );
   }
 });
