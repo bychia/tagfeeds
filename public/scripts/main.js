@@ -107,9 +107,9 @@ var NewsBox = React.createClass({
       <div id="newsFg">
         <table id="news">
           <colgroup>
-            <col width="15px"/>
+            <col width="10px"/>
             <col width="auto"/>
-            <col width="15px"/>
+            <col width="10px"/>
           </colgroup>
           <tbody>
             <tr>

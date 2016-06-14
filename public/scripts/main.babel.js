@@ -130,9 +130,9 @@ var NewsBox = React.createClass({
           React.createElement(
             "colgroup",
             null,
-            React.createElement("col", { width: "15px" }),
+            React.createElement("col", { width: "10px" }),
             React.createElement("col", { width: "auto" }),
-            React.createElement("col", { width: "15px" })
+            React.createElement("col", { width: "10px" })
           ),
           React.createElement(
             "tbody",
