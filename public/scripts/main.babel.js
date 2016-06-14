@@ -88,7 +88,7 @@ var TableBox = React.createClass({
         null,
         React.createElement(
           "div",
-          { id: "carousel-example-generic", className: "carousel slide", "data-ride": "carousel", "data-interval": "10000" },
+          { id: "carousel-example-generic", className: "carousel slide", "data-ride": "carousel", "data-interval": "false" },
           React.createElement(
             "ol",
             { className: "carousel-indicators" },
