@@ -56,7 +56,7 @@ var TableBox = React.createClass({
 
       var carouselInner = [];
       for (var i=0; i < dataCount; i++) {
-          var carouselInnerDivClassName = (i==0)? "item active":"item lazy-load";
+          var carouselInnerDivClassName = (i==0)? "item active":"item";
           var parentDivId = "carouselInnerParentDivId"+i
           var imageId = "carouselInnerImageId"+i;
           var divId = "carouselInnerDivId"+i;
