@@ -17,6 +17,11 @@ var dateCooked = function dateCooked(pubDateStr) {
     return pubDate.toLocaleDateString();
   }
 };
+var preload = function preload(arrayOfImages) {
+  $(arrayOfImages).each(function () {
+    $('<img/>')[0].src = this;
+  });
+};
 var backendURL = "http://chrischia.info:3000/newsBing";
 var TableBox = React.createClass({
   displayName: "TableBox",
@@ -83,7 +88,7 @@ var TableBox = React.createClass({
         null,
         React.createElement(
           "div",
-          { id: "carousel-example-generic", className: "carousel slide", "data-ride": "carousel", "data-interval": "false" },
+          { id: "carousel-example-generic", className: "carousel slide", "data-ride": "carousel", "data-interval": "10000" },
           React.createElement(
             "ol",
             { className: "carousel-indicators" },
@@ -104,17 +109,30 @@ var TableBox = React.createClass({
 var NewsBox = React.createClass({
   displayName: "NewsBox",
 
+  preloadData: function preloadData(items, index) {
+    var imageCount = items.length;
+    if (imageCount > 1) {
+      var previousIndex = index - 1 < 0 ? imageCount - 1 : index - 1;
+      var previousImage = items[previousIndex].image;
+      var nextIndex = index + 1 >= imageCount ? 0 : index + 1;
+      var nextImage = items[nextIndex].image;
+      preload([previousImage, nextImage]);
+    }
+  },
   getPreviousData: function getPreviousData() {
     var previousIndex = this.state.index - 1;
     previousIndex = previousIndex < 0 ? this.props.data.length - 1 : previousIndex;
+    this.preloadData(this.props.data, previousIndex);
     this.setState({ index: previousIndex, currentData: this.props.data[previousIndex] });
   },
   getNextData: function getNextData() {
     var nextIndex = this.state.index + 1;
     nextIndex = nextIndex == this.props.data.length ? 0 : nextIndex;
+    this.preloadData(this.props.data, nextIndex);
     this.setState({ index: nextIndex, currentData: this.props.data[nextIndex] });
   },
   getInitialState: function getInitialState() {
+    this.preloadData(this.props.data, 0);
     return { index: 0, currentData: this.props.data[0] };
   },
   render: function render() {
@@ -130,9 +148,9 @@ var NewsBox = React.createClass({
           React.createElement(
             "colgroup",
             null,
-            React.createElement("col", { width: "10px" }),
-            React.createElement("col", { width: "auto" }),
-            React.createElement("col", { width: "10px" })
+            React.createElement("col", { className: "table-col" }),
+            React.createElement("col", null),
+            React.createElement("col", { className: "table-col" })
           ),
           React.createElement(
             "tbody",

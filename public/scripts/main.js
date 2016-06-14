@@ -12,6 +12,11 @@ var dateCooked = function(pubDateStr){
     return pubDate.toLocaleDateString();
   }
 }
+var preload = function(arrayOfImages) {
+    $(arrayOfImages).each(function(){
+        $('<img/>')[0].src = this;
+    });
+}
 var backendURL = "http://chrischia.info:3000/newsBing";
 var TableBox = React.createClass({
   getInitialState: function() {
@@ -72,7 +77,7 @@ var TableBox = React.createClass({
 
       return (
         <div>
-          <div id="carousel-example-generic" className="carousel slide" data-ride="carousel"  data-interval="false">
+          <div id="carousel-example-generic" className="carousel slide" data-ride="carousel"  data-interval="10000">
             <ol className='carousel-indicators'>
               {carouselIndicators}
             </ol>
@@ -88,17 +93,30 @@ var TableBox = React.createClass({
 });
 
 var NewsBox = React.createClass({
+  preloadData: function(items, index){
+    var imageCount = items.length;
+    if(imageCount>1){
+      var previousIndex = (index-1<0)? imageCount-1: index-1;
+      var previousImage = items[previousIndex].image;
+      var nextIndex = (index+1 >= imageCount)? 0: index+1;
+      var nextImage = items[nextIndex].image;
+      preload([previousImage, nextImage]);
+    }
+  },
   getPreviousData : function(){
     var previousIndex = this.state.index-1;
     previousIndex = (previousIndex<0)? this.props.data.length-1: previousIndex;
+    this.preloadData(this.props.data, previousIndex);
     this.setState({index:previousIndex, currentData:this.props.data[previousIndex]});
   },
   getNextData : function(){
     var nextIndex = this.state.index+1;
     nextIndex = (nextIndex==this.props.data.length)? 0: nextIndex;
+    this.preloadData(this.props.data, nextIndex);
     this.setState({index:nextIndex, currentData:this.props.data[nextIndex]});
   },
   getInitialState: function() {
+    this.preloadData(this.props.data, 0);
     return {index:0, currentData:this.props.data[0]};
   },
   render: function() {
@@ -107,9 +125,9 @@ var NewsBox = React.createClass({
       <div id="newsFg">
         <table id="news">
           <colgroup>
-            <col width="10px"/>
-            <col width="auto"/>
-            <col width="10px"/>
+            <col className="table-col"/>
+            <col/>
+            <col className="table-col"/>
           </colgroup>
           <tbody>
             <tr>

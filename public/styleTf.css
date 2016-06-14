@@ -5,6 +5,9 @@
 .glyphicon-padding{
   padding: 2px;
 }
+.table-col{
+  width: 10px;
+}
 
 body{
   font-family: helvetica, verdana, sans-serif;
