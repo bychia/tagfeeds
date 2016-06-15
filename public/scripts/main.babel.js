@@ -17,6 +17,16 @@ var dateCooked = function dateCooked(pubDateStr) {
     return pubDate.toLocaleDateString();
   }
 };
+var localStorage = window.localStorage;
+var isOutdated = function isOutdated(currentTimestamp) {
+  if (typeof localStorage !== "undefined") {
+    var tfLastSaved = localStorage.getItem("tfLastSaved");
+    if (tfLastSaved != null) {
+      return (tfLastSaved - currentTimestamp) / 3600000 > 1; // is outdated after an hour
+    }
+  }
+  return true;
+};
 var preload = function preload(arrayOfImages) {
   $(arrayOfImages).each(function () {
     $('<img/>')[0].src = this;
@@ -29,19 +39,36 @@ var TableBox = React.createClass({
   getInitialState: function getInitialState() {
     return { data: undefined };
   },
-  componentDidMount: function componentDidMount() {
+  fetchNewsFeeds: function fetchNewsFeeds() {
     this.serverRequest = $.ajax({
       url: this.props.url,
       dataType: 'json',
       cache: true,
       timeout: 5000,
       success: function (data) {
+        if (typeof localStorage !== "undefined") {
+          localStorage.setItem("tfData", JSON.stringify(data));
+          localStorage.setItem("tfLastSaved", new Date().getTime());
+        }
         this.setState({ data: data });
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
       }.bind(this)
     });
+  },
+  componentDidMount: function componentDidMount() {
+    var currentTimestamp = new Date();
+    if (isOutdated(currentTimestamp)) {
+      this.fetchNewsFeeds();
+    } else {
+      var tfData = localStorage.getItem("tfData");
+      if (tfData != null) {
+        this.setState({ data: JSON.parse(tfData) });
+      } else {
+        this.fetchNewsFeeds();
+      }
+    }
   },
   componentWillUnmount: function componentWillUnmount() {
     this.serverRequest.abort();
