@@ -144,7 +144,7 @@ var NewsBox = React.createClass({
               <td id="newsRow">
                 <div>
                   <span id="newsTitle">
-                    {this.state.currentData.title}
+                    <a href={this.state.currentData.link} target="_blank">{this.state.currentData.title}</a>
                   </span>
                   <br/>
                   <span id="newsSrc">

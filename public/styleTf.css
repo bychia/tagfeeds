@@ -2,12 +2,6 @@
 .item{
   height: 100% !important;
 }
-.glyphicon-padding{
-  padding: 2px;
-}
-.table-col{
-  width: 10px;
-}
 
 body{
   font-family: helvetica, verdana, sans-serif;
@@ -25,6 +19,7 @@ div#newsBg {
     left:0;
     top: 0;
 }
+
 div#blackOverlay {
   position: absolute;
   left:0rem;
@@ -37,10 +32,6 @@ div#blackOverlay {
 tr#newsSection{
   background: rgba(0, 0, 0, 0.7);
 }
-
-/*td#logoRow{
-  padding-left:2rem;
-}*/
 
 td#newsRow{
   /*padding-left:2rem;*/
@@ -82,16 +73,20 @@ span#newsDate {
     font-style: italic;
 }
 
+a:link, a:hover, a:visited, a:active{
+    color: rgb(237, 237, 237);
+    text-decoration: none;
+
+}
+
 @media only screen and (min-width: 320px) {
   /* For tablets: */
-  /*td#logoRow{
-    padding-left:1.2rem;
-  }*/
-
-  /*td#newsRow{
-    padding-left:1.2rem;
-    padding-right:1.2rem;
-  }*/
+  .glyphicon-padding{
+    padding: 2px;
+  }
+  .table-col{
+    width: 10px;
+  }
 
   span#newsBody {
       font-size:1.4rem;
@@ -117,6 +112,13 @@ span#newsDate {
 
 @media only screen and (min-width: 600px) {
   /* For tablets: */
+  .glyphicon-padding{
+    padding: 8px;
+  }
+  .table-col{
+    width: 15px;
+  }
+
   span#newsBody {
       font-size:1.6rem;
       font-weight:normal;
@@ -142,6 +144,13 @@ span#newsDate {
 
 @media only screen and (min-width: 768px) {
   /* For desktop: */
+  .glyphicon-padding{
+    padding: 15px;
+  }
+  .table-col{
+    width: 25px;
+  }
+
   table#news {
     left: 0rem;
     top: 30%;

@@ -183,7 +183,11 @@ var NewsBox = React.createClass({
                   React.createElement(
                     "span",
                     { id: "newsTitle" },
-                    this.state.currentData.title
+                    React.createElement(
+                      "a",
+                      { href: this.state.currentData.link, target: "_blank" },
+                      this.state.currentData.title
+                    )
                   ),
                   React.createElement("br", null),
                   React.createElement(
