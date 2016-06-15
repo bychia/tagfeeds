@@ -22,11 +22,12 @@ var isOutdated = function(currentTimestamp){
   }
   return true;
 }
-var preload = function(arrayOfImages) {
+var preloadImage = function(arrayOfImages) {
     $(arrayOfImages).each(function(){
         $('<img/>')[0].src = this;
     });
 }
+
 var backendURL = "http://chrischia.info:3000/newsBing";
 var TableBox = React.createClass({
   getInitialState: function() {
@@ -127,18 +128,11 @@ var NewsBox = React.createClass({
       var previousImage = items[previousIndex].image;
       var nextIndex = (index+1 >= imageCount)? 0: index+1;
       var nextImage = items[nextIndex].image;
-      preload([previousImage, nextImage]);
+      preloadImage([previousImage, nextImage]);
     }
   },
-  getPreviousData : function(){
-    var previousIndex = this.state.index-1;
-    previousIndex = (previousIndex<0)? this.props.data.length-1: previousIndex;
-    this.preloadData(this.props.data, previousIndex);
-    this.setState({index:previousIndex, currentData:this.props.data[previousIndex]});
-  },
-  getNextData : function(){
-    var nextIndex = this.state.index+1;
-    nextIndex = (nextIndex==this.props.data.length)? 0: nextIndex;
+  getData : function(){
+    var nextIndex = $('.carousel').find(".active").index();
     this.preloadData(this.props.data, nextIndex);
     this.setState({index:nextIndex, currentData:this.props.data[nextIndex]});
   },
@@ -195,8 +189,8 @@ var NewsBox = React.createClass({
         </table>
       </div>
 
-      <a className="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev" onClick={this.getPreviousData} />
-      <a className="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next" onClick={this.getNextData} />
+      <a className="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev" onClick={this.getData} />
+      <a className="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next" onClick={this.getData} />
       </div>
     );
   }

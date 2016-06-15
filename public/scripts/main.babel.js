@@ -27,11 +27,12 @@ var isOutdated = function isOutdated(currentTimestamp) {
   }
   return true;
 };
-var preload = function preload(arrayOfImages) {
+var preloadImage = function preloadImage(arrayOfImages) {
   $(arrayOfImages).each(function () {
     $('<img/>')[0].src = this;
   });
 };
+
 var backendURL = "http://chrischia.info:3000/newsBing";
 var TableBox = React.createClass({
   displayName: "TableBox",
@@ -143,18 +144,11 @@ var NewsBox = React.createClass({
       var previousImage = items[previousIndex].image;
       var nextIndex = index + 1 >= imageCount ? 0 : index + 1;
       var nextImage = items[nextIndex].image;
-      preload([previousImage, nextImage]);
+      preloadImage([previousImage, nextImage]);
     }
   },
-  getPreviousData: function getPreviousData() {
-    var previousIndex = this.state.index - 1;
-    previousIndex = previousIndex < 0 ? this.props.data.length - 1 : previousIndex;
-    this.preloadData(this.props.data, previousIndex);
-    this.setState({ index: previousIndex, currentData: this.props.data[previousIndex] });
-  },
-  getNextData: function getNextData() {
-    var nextIndex = this.state.index + 1;
-    nextIndex = nextIndex == this.props.data.length ? 0 : nextIndex;
+  getData: function getData() {
+    var nextIndex = $('.carousel').find(".active").index();
     this.preloadData(this.props.data, nextIndex);
     this.setState({ index: nextIndex, currentData: this.props.data[nextIndex] });
   },
@@ -251,8 +245,8 @@ var NewsBox = React.createClass({
           )
         )
       ),
-      React.createElement("a", { className: "left carousel-control", href: "#carousel-example-generic", role: "button", "data-slide": "prev", onClick: this.getPreviousData }),
-      React.createElement("a", { className: "right carousel-control", href: "#carousel-example-generic", role: "button", "data-slide": "next", onClick: this.getNextData })
+      React.createElement("a", { className: "left carousel-control", href: "#carousel-example-generic", role: "button", "data-slide": "prev", onClick: this.getData }),
+      React.createElement("a", { className: "right carousel-control", href: "#carousel-example-generic", role: "button", "data-slide": "next", onClick: this.getData })
     );
   }
 });
