@@ -40,6 +40,7 @@ var TableBox = React.createClass({
       timeout: 5000,
       success: function(data) {
         if(typeof(localStorage)!=="undefined"){
+          alert("entered");
           localStorage.setItem("tfData", JSON.stringify(data));
           localStorage.setItem("tfLastSaved", new Date().getTime());
         }
