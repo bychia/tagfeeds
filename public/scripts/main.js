@@ -17,7 +17,7 @@ var isOutdated = function(currentTimestamp){
   if(typeof(localStorage)!=="undefined"){
     var tfLastSaved = localStorage.getItem("tfLastSaved");
     if(tfLastSaved!=null){
-      return (((tfLastSaved-currentTimestamp)/3600000)>1); // is outdated after an hour
+      return (((currentTimestamp-tfLastSaved)/3600000)>1); // is outdated after an hour
     }
   }
   return true;
@@ -40,14 +40,14 @@ var TableBox = React.createClass({
       timeout: 5000,
       success: function(data) {
         if(typeof(localStorage)!=="undefined"){
-          alert("success1");
+          // alert("success1");
           localStorage.setItem("tfData", JSON.stringify(data));
           localStorage.setItem("tfLastSaved", new Date().getTime());
         }
         this.setState({data:data});
       }.bind(this),
       error: function(xhr, status, err) {
-        alert("error1");
+        // alert("error1");
         console.error(this.props.url, status, err.toString());
       }.bind(this)
     });
@@ -55,12 +55,14 @@ var TableBox = React.createClass({
   componentDidMount: function() {
     var currentTimestamp = new Date().getTime();
     if(isOutdated(currentTimestamp)){
-      alert("outdated");
+      // alert("outdated");
       this.fetchNewsFeeds();
     }else{
       var tfData = localStorage.getItem("tfData");
       if(tfData!=null){
-        alert("notdated");
+        // alert("notdated");
+        // var tfLastSaved = localStorage.getItem("tfLastSaved");
+        // alert(tfLastSaved-currentTimestamp);
         this.setState({data:JSON.parse(tfData)});
       }
     }
