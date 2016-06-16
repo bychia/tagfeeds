@@ -32,7 +32,6 @@ var preloadImage = function preloadImage(arrayOfImages) {
     $('<img/>')[0].src = this;
   });
 };
-
 var backendURL = "http://chrischia.info:3000/newsBing";
 var TableBox = React.createClass({
   displayName: "TableBox",
@@ -59,58 +58,26 @@ var TableBox = React.createClass({
     });
   },
   componentDidMount: function componentDidMount() {
-    var currentTimestamp = new Date();
+    var currentTimestamp = new Date().getTime();
     if (isOutdated(currentTimestamp)) {
       this.fetchNewsFeeds();
     } else {
       var tfData = localStorage.getItem("tfData");
       if (tfData != null) {
         this.setState({ data: JSON.parse(tfData) });
-      } else {
-        this.fetchNewsFeeds();
       }
     }
   },
   componentWillUnmount: function componentWillUnmount() {
     this.serverRequest.abort();
   },
+  getNewsBoxData: function getNewsBoxData() {
+    this.refs.newsBox.getData();
+  },
   render: function render() {
     if (this.state.data == undefined) {
       return React.createElement("div", null);
     } else {
-      var dataCount = this.state.data.length;
-      var carouselIndicators = [];
-      for (var i = 0; i < dataCount; i++) {
-        var carouselIndicatorsClassName = i == 0 ? "active" : "";
-        var carouselIndicatorsKeyId = "carouselIndicatorsKeyId" + i;
-        carouselIndicators.push(React.createElement("li", { "data-target": "#carousel-example-generic", "data-slide-to": i, className: carouselIndicatorsClassName, key: carouselIndicatorsKeyId }));
-      }
-
-      var carouselInner = [];
-      for (var i = 0; i < dataCount; i++) {
-        var carouselInnerDivClassName = i == 0 ? "item active" : "item";
-        var parentDivId = "carouselInnerParentDivId" + i;
-        var imageId = "carouselInnerImageId" + i;
-        var divId = "carouselInnerDivId" + i;
-        var newsBgId = "carouselInnerNewsBg" + i;
-        var blackOverlayId = "carouselInnerBlackOverlay" + i;
-        var newsBgStyle = {
-          background: 'url("' + this.state.data[i].image + '")'
-        };
-
-        carouselInner.push(React.createElement(
-          "div",
-          { className: carouselInnerDivClassName, key: parentDivId },
-          React.createElement("img", { src: "images/spacer.png", height: "100%", width: "100%", key: imageId }),
-          React.createElement(
-            "div",
-            { key: divId },
-            React.createElement("div", { id: "newsBg", style: newsBgStyle, key: newsBgId }),
-            React.createElement("div", { id: "blackOverlay", key: blackOverlayId })
-          )
-        ));
-      }
-
       return React.createElement(
         "div",
         null,
@@ -120,15 +87,42 @@ var TableBox = React.createClass({
           React.createElement(
             "ol",
             { className: "carousel-indicators" },
-            carouselIndicators
+            this.state.data.map(function (news, index) {
+              var handleUpdate = this.getNewsBoxData.bind(this, index);
+              var carouselIndicatorsClassName = index == 0 ? "active" : " ";
+              var carouselIndicatorsKeyId = "carouselIndicatorsKeyId" + index;
+              return React.createElement("li", { "data-target": "#carousel-example-generic", onClick: handleUpdate, "data-slide-to": index, className: carouselIndicatorsClassName, key: carouselIndicatorsKeyId });
+            }, this)
           ),
           React.createElement(
             "div",
             { className: "carousel-inner", role: "listbox" },
-            carouselInner
+            this.state.data.map(function (news, index) {
+              var carouselInnerDivClassName = index == 0 ? "item active" : "item";
+              var parentDivId = "carouselInnerParentDivId" + index;
+              var imageId = "carouselInnerImageId" + index;
+              var divId = "carouselInnerDivId" + index;
+              var newsBgId = "carouselInnerNewsBg" + index;
+              var blackOverlayId = "carouselInnerBlackOverlay" + index;
+              var newsBgStyle = {
+                background: 'url("' + this.state.data[index].image + '")'
+              };
+
+              return React.createElement(
+                "div",
+                { className: carouselInnerDivClassName, key: parentDivId },
+                React.createElement("img", { src: "images/spacer.png", height: "100%", width: "100%", key: imageId }),
+                React.createElement(
+                  "div",
+                  { key: divId },
+                  React.createElement("div", { id: "newsBg", style: newsBgStyle, key: newsBgId }),
+                  React.createElement("div", { id: "blackOverlay", key: blackOverlayId })
+                )
+              );
+            }, this)
           )
         ),
-        React.createElement(NewsBox, { data: this.state.data })
+        React.createElement(NewsBox, { ref: "newsBox", data: this.state.data })
       );
     }
   }
