@@ -75,7 +75,7 @@ var TableBox = React.createClass({
       );
     }else{
       return (
-        <div className="newsDefaultBg">
+        <div>
           <div id="carousel-example-generic" className="carousel slide" data-ride="carousel"  data-interval="false">
             <ol className='carousel-indicators'>
               {
