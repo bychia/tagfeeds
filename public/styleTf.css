@@ -1,10 +1,15 @@
 /*carousel item*/
+body{
+  font-family: helvetica, verdana, sans-serif;
+}
+
 .item{
   height: 100% !important;
 }
 
-body{
-  font-family: helvetica, verdana, sans-serif;
+.newsDefaultBg{
+  background-image: url("images/backgroundTf.png");
+  background-repeat: repeat;
 }
 
 div#newsBg {

@@ -47,14 +47,12 @@ var TableBox = React.createClass({
       timeout: 5000,
       success: function (data) {
         if (typeof localStorage !== "undefined") {
-          // alert("success1");
           localStorage.setItem("tfData", JSON.stringify(data));
           localStorage.setItem("tfLastSaved", new Date().getTime());
         }
         this.setState({ data: data });
       }.bind(this),
       error: function (xhr, status, err) {
-        // alert("error1");
         console.error(this.props.url, status, err.toString());
       }.bind(this)
     });
@@ -62,14 +60,10 @@ var TableBox = React.createClass({
   componentDidMount: function componentDidMount() {
     var currentTimestamp = new Date().getTime();
     if (isOutdated(currentTimestamp)) {
-      // alert("outdated");
       this.fetchNewsFeeds();
     } else {
       var tfData = localStorage.getItem("tfData");
       if (tfData != null) {
-        // alert("notdated");
-        // var tfLastSaved = localStorage.getItem("tfLastSaved");
-        // alert(tfLastSaved-currentTimestamp);
         this.setState({ data: JSON.parse(tfData) });
       }
     }
@@ -86,7 +80,7 @@ var TableBox = React.createClass({
     } else {
       return React.createElement(
         "div",
-        null,
+        { className: "newsDefaultBg" },
         React.createElement(
           "div",
           { id: "carousel-example-generic", className: "carousel slide", "data-ride": "carousel", "data-interval": "false" },
