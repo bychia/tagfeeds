@@ -47,8 +47,12 @@ var TableBox = React.createClass({
       timeout: 5000,
       success: function (data) {
         if (typeof localStorage !== "undefined") {
-          localStorage.setItem("tfData", JSON.stringify(data));
-          localStorage.setItem("tfLastSaved", new Date().getTime());
+          try {
+            localStorage.setItem("tfData", JSON.stringify(data));
+            localStorage.setItem("tfLastSaved", new Date().getTime());
+          } catch (err) {
+            console.log(err.toString());
+          }
         }
         this.setState({ data: data });
       }.bind(this),
