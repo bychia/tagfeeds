@@ -4,6 +4,7 @@ import os
 # import datetime
 # import logging, logging.handlers
 from flask import Flask, Response, request
+from flask.ext.cors import CORS, cross_origin
 
 from xml.dom import minidom
 #import urllib.request as request #python3
@@ -15,6 +16,7 @@ STR_URL = 'http://www.bing.com/news?q=&format=RSS'
 STR_PICSIZE ="&w=1500&h=1000&c=7&rs=2"
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 # app.logger.setLevel(logging.INFO) # use the native logger of flask
 # handler = logging.handlers.RotatingFileHandler(
 #     LOG_FILENAME,
