@@ -80,7 +80,7 @@ var TableBox = React.createClass({
     } else {
       return React.createElement(
         "div",
-        { className: "newsDefaultBg" },
+        null,
         React.createElement(
           "div",
           { id: "carousel-example-generic", className: "carousel slide", "data-ride": "carousel", "data-interval": "false" },
