@@ -15,11 +15,15 @@ var dateCooked = function(pubDateStr){
 var localStorage = window.localStorage;
 var isOutdated = function(currentTimestamp){
   if(typeof(localStorage)!=="undefined"){
+    alert("localstorage is present");
     var tfLastSaved = localStorage.getItem("tfLastSaved");
     if(tfLastSaved!=null){
+      alert("tfLastSaved is present: Required updated?:" + (((currentTimestamp-tfLastSaved)/3600000)>1));
       return (((currentTimestamp-tfLastSaved)/3600000)>1); // is outdated after an hour
     }
+    alert("tfLastSaved is absent");
   }
+  alert("localstorage is absent");
   return true;
 }
 var preloadImage = function(arrayOfImages) {
@@ -39,22 +43,26 @@ var TableBox = React.createClass({
       cache: true,
       timeout: 5000,
       success: function(data) {
+        alert("success");
         if(typeof(localStorage)!=="undefined"){
+          alert("success: localStorage present");
           localStorage.setItem("tfData", JSON.stringify(data));
           localStorage.setItem("tfLastSaved", new Date().getTime());
         }
         this.setState({data:data});
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
+        alert(this.props.url, status, err.toString());
       }.bind(this)
     });
   },
   componentDidMount: function() {
     var currentTimestamp = new Date().getTime();
     if(isOutdated(currentTimestamp)){
+      alert(1);
       this.fetchNewsFeeds();
     }else{
+      alert(2);
       var tfData = localStorage.getItem("tfData");
       if(tfData!=null){
         this.setState({data:JSON.parse(tfData)});
