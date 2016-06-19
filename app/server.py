@@ -46,7 +46,6 @@ def newsBing_handler():
     docXml = minidom.parseString(strXml)
     items = docXml.getElementsByTagName("item")
     itemsCount = len(items)
-
     newsList = []
 
     if(itemsCount>0):
