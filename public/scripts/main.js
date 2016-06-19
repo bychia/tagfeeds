@@ -27,7 +27,7 @@ var preloadImage = function(arrayOfImages) {
         $('<img/>')[0].src = this;
     });
 }
-var backendURL = "http://chrischia.info:3000/newsBing";
+var backendURL = "http://tagfeeds.com:3000/newsBing";
 var TableBox = React.createClass({
   getInitialState: function() {
     return {data:undefined};
