@@ -154,6 +154,22 @@ var NewsBox = React.createClass({
     this.preloadData(this.props.data, 0);
     return { index: 0, currentData: this.props.data[0] };
   },
+  componentDidMount: function componentDidMount() {
+    var _this = this;
+    // keydown event
+    $(function () {
+      $('body').keydown(function (e) {
+        var keyPress = e.which;
+        if (keyPress == 37) {
+          $("#carousel-left").click();
+          _this.getData();
+        } else if (keyPress == 39) {
+          $("#carousel-right").click();
+          _this.getData();
+        }
+      });
+    });
+  },
   render: function render() {
     return React.createElement(
       "div",
@@ -243,8 +259,8 @@ var NewsBox = React.createClass({
           )
         )
       ),
-      React.createElement("a", { className: "left carousel-control", href: "#carousel-example-generic", role: "button", "data-slide": "prev", onClick: this.getData }),
-      React.createElement("a", { className: "right carousel-control", href: "#carousel-example-generic", role: "button", "data-slide": "next", onClick: this.getData })
+      React.createElement("a", { id: "carousel-left", className: "left carousel-control", href: "#carousel-example-generic", role: "button", "data-slide": "prev", onClick: this.getData }),
+      React.createElement("a", { id: "carousel-right", className: "right carousel-control", href: "#carousel-example-generic", role: "button", "data-slide": "next", onClick: this.getData })
     );
   }
 });

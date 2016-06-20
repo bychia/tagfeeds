@@ -142,6 +142,22 @@ var NewsBox = React.createClass({
     this.preloadData(this.props.data, 0);
     return {index:0, currentData:this.props.data[0]};
   },
+  componentDidMount: function(){
+    var _this = this;
+    // keydown event
+    $(function(){
+        $('body').keydown(function(e){
+          var keyPress = e.which;
+          if(keyPress == 37){
+            $("#carousel-left").click();
+            _this.getData();
+          }else if(keyPress == 39){
+            $("#carousel-right").click();
+            _this.getData();
+          }
+        });
+    });
+  },
   render: function() {
     return (
       <div>
@@ -191,8 +207,8 @@ var NewsBox = React.createClass({
         </table>
       </div>
 
-      <a className="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev" onClick={this.getData} />
-      <a className="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next" onClick={this.getData} />
+      <a id="carousel-left" className="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev" onClick={this.getData} />
+      <a id="carousel-right" className="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next" onClick={this.getData} />
       </div>
     );
   }
