@@ -7,7 +7,6 @@ from flask import Flask, Response, request
 # from flask_cors import CORS, cross_origin
 
 from xml.dom import minidom
-#import urllib.request as request #python3
 import urllib #python2.7
 
 
@@ -40,8 +39,9 @@ def preRequest_logging():
 #Endpoints
 @app.route('/newsBing', methods=['GET'])
 def newsBing_handler():
-    #strXml = request.urlopen(STR_URL).read()
-    strXml = urllib.urlopen(STR_URL).read()
+    strSearch = request.args.get('search');
+    strURL = STR_URL if (strSearch==None) else STR_URL+"&q="+strSearch;
+    strXml = urllib.urlopen(strURL).read()
     docXml = minidom.parseString(strXml)
     items = docXml.getElementsByTagName("item")
     itemsCount = len(items)
@@ -49,11 +49,12 @@ def newsBing_handler():
 
     if(itemsCount>0):
         for item in items:
+            imageUrl = "" if len(item.getElementsByTagName("News:Image"))==0 else item.getElementsByTagName("News:Image")[0].firstChild.nodeValue+STR_PICSIZE;
             news = {"title": item.getElementsByTagName("title")[0].firstChild.nodeValue,
             "link": item.getElementsByTagName("link")[0].firstChild.nodeValue,
             "description": item.getElementsByTagName("description")[0].firstChild.nodeValue,
             "pubDate": item.getElementsByTagName("pubDate")[0].firstChild.nodeValue,
-            "image": item.getElementsByTagName("News:Image")[0].firstChild.nodeValue+STR_PICSIZE,
+            "image": imageUrl,
             "newsSrc": item.getElementsByTagName("News:Source")[0].firstChild.nodeValue
             }
             newsList.append(news)
