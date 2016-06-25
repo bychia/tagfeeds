@@ -24,6 +24,25 @@ handler = logging.handlers.RotatingFileHandler(
     )
 app.logger.addHandler(handler)
 
+def formatData(item):
+    imageUrl = "" if len(item.getElementsByTagName("News:Image"))==0 else item.getElementsByTagName("News:Image")[0].firstChild.nodeValue+STR_PICSIZE
+    title = "" if len(item.getElementsByTagName("title"))==0 else item.getElementsByTagName("title")[0].firstChild.nodeValue
+    link = "" if len(item.getElementsByTagName("link"))==0 else item.getElementsByTagName("link")[0].firstChild.nodeValue
+    description = "" if len(item.getElementsByTagName("description"))==0 else item.getElementsByTagName("description")[0].firstChild.nodeValue
+    pubDate = "" if len(item.getElementsByTagName("pubDate"))==0 else item.getElementsByTagName("pubDate")[0].firstChild.nodeValue
+    newsSrc = "" if len(item.getElementsByTagName("News:Source"))==0 else item.getElementsByTagName("News:Source")[0].firstChild.nodeValue
+
+    news = {   "title": title,
+        "link": link,
+        "description": description,
+        "pubDate": pubDate,
+        "image": imageUrl,
+        "newsSrc": newsSrc
+    }
+
+    return news
+
+
 @app.before_request
 def preRequest_logging():
     if 'text/html' in request.headers['Accept']:
@@ -49,14 +68,7 @@ def newsBing_handler():
 
     if(itemsCount>0):
         for item in items:
-            imageUrl = "" if len(item.getElementsByTagName("News:Image"))==0 else item.getElementsByTagName("News:Image")[0].firstChild.nodeValue+STR_PICSIZE;
-            news = {"title": item.getElementsByTagName("title")[0].firstChild.nodeValue,
-            "link": item.getElementsByTagName("link")[0].firstChild.nodeValue,
-            "description": item.getElementsByTagName("description")[0].firstChild.nodeValue,
-            "pubDate": item.getElementsByTagName("pubDate")[0].firstChild.nodeValue,
-            "image": imageUrl,
-            "newsSrc": item.getElementsByTagName("News:Source")[0].firstChild.nodeValue
-            }
+            news = formatData(item)
             newsList.append(news)
 
     return Response(

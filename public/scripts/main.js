@@ -28,13 +28,58 @@ var preloadImage = function(arrayOfImages) {
     });
 }
 var backendURL = "http://tagfeeds.com:3000/newsBing";
-var TableBox = React.createClass({
+
+var NavBox = React.createClass({
+  componentDidMount: function(){
+    // keyup event
+    var main = this;
+    $(function(){
+        $('#searchForm').submit(function () {
+          return false;
+        });
+        $('#searchInput').keypress(function(e){
+          var _this = $(this);
+          if(e.keyCode == 13){
+            main.props.callbackParent(_this.val());
+            _this.blur();
+          }
+        });
+    });
+  },
+  render: function(){
+    return (
+      <nav className="navbar navbar-inverse navbar-fixed-top">
+        <div className="container-fluid">
+          <div className="navbar-header">
+            <a className="navbar-brand" href="#">
+              <img src="images/brandTf.png" />
+            </a>
+            <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span className="sr-only">Toggle navigation</span>
+            </button>
+          </div>
+          <div id="navbar" className="navbar-collapse collapse" aria-expanded="false">
+            <ul className="nav navbar-nav navbar-left">
+            <form id="searchForm" className="navbar-form navbar-left" autocomplete="new-password" role="form">
+              <div className="form-group">
+              <input id="searchInput" type="text" className="form-control" placeholder="Search"/>
+              </div>
+            </form>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    )
+  }
+});
+var MainBox = React.createClass({
   getInitialState: function() {
     return {data:undefined};
   },
-  fetchNewsFeeds: function(){
+  fetchNewsFeeds: function(searchText){
+    var strUrl = (searchText==undefined)? backendURL: backendURL+"?search="+searchText;
     this.serverRequest = $.ajax({
-      url: this.props.url,
+      url: strUrl,
       dataType: 'json',
       cache: true,
       timeout: 5000,
@@ -48,9 +93,10 @@ var TableBox = React.createClass({
           }
         }
         this.setState({data:data});
+        this.getNewsBoxData();
       }.bind(this),
       error: function(xhr, status, err) {
-        console.log(this.props.url, status, err.toString());
+        console.log(backendURL, status, err.toString());
       }.bind(this)
     });
   },
@@ -80,7 +126,8 @@ var TableBox = React.createClass({
     }else{
       return (
         <div>
-          <div id="carousel-example-generic" className="carousel slide" data-ride="carousel"  data-interval="false">
+          <NavBox callbackParent={this.fetchNewsFeeds} />
+          <div id="carousel-example-generic" className="carousel slide" data-ride="carousel" data-interval="false">
             <ol className='carousel-indicators'>
               {
                 this.state.data.map(function(news, index) {
@@ -144,7 +191,6 @@ var NewsBox = React.createClass({
   },
   componentDidMount: function(){
     var _this = this;
-    // keydown event
     $(function(){
         $('body').keydown(function(e){
           var keyPress = e.which;
@@ -215,6 +261,6 @@ var NewsBox = React.createClass({
 });
 
 ReactDOM.render(
-  <TableBox url={backendURL}/>,
+  <MainBox url={backendURL}/>,
   document.getElementById('content')
 );
