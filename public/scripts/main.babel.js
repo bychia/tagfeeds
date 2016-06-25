@@ -33,15 +33,82 @@ var preloadImage = function preloadImage(arrayOfImages) {
   });
 };
 var backendURL = "http://tagfeeds.com:3000/newsBing";
-var TableBox = React.createClass({
-  displayName: "TableBox",
+
+var NavBox = React.createClass({
+  displayName: "NavBox",
+
+  componentDidMount: function componentDidMount() {
+    // keyup event
+    var main = this;
+    $(function () {
+      $('#searchForm').submit(function () {
+        return false;
+      });
+      $('#searchInput').keypress(function (e) {
+        var _this = $(this);
+        if (e.keyCode == 13) {
+          main.props.callbackParent(_this.val());
+          _this.blur();
+        }
+      });
+    });
+  },
+  render: function render() {
+    return React.createElement(
+      "nav",
+      { className: "navbar navbar-inverse navbar-fixed-top" },
+      React.createElement(
+        "div",
+        { className: "container-fluid" },
+        React.createElement(
+          "div",
+          { className: "navbar-header" },
+          React.createElement(
+            "a",
+            { className: "navbar-brand", href: "#" },
+            React.createElement("img", { src: "images/brandTf.png" })
+          ),
+          React.createElement(
+            "button",
+            { type: "button", className: "navbar-toggle collapsed", "data-toggle": "collapse", "data-target": "#navbar", "aria-expanded": "false", "aria-controls": "navbar" },
+            React.createElement(
+              "span",
+              { className: "sr-only" },
+              "Toggle navigation"
+            )
+          )
+        ),
+        React.createElement(
+          "div",
+          { id: "navbar", className: "navbar-collapse collapse", "aria-expanded": "false" },
+          React.createElement(
+            "ul",
+            { className: "nav navbar-nav navbar-left" },
+            React.createElement(
+              "form",
+              { id: "searchForm", className: "navbar-form navbar-left", autocomplete: "new-password", role: "form" },
+              React.createElement(
+                "div",
+                { className: "form-group" },
+                React.createElement("input", { id: "searchInput", type: "text", className: "form-control", placeholder: "Search" })
+              )
+            )
+          )
+        )
+      )
+    );
+  }
+});
+var MainBox = React.createClass({
+  displayName: "MainBox",
 
   getInitialState: function getInitialState() {
     return { data: undefined };
   },
-  fetchNewsFeeds: function fetchNewsFeeds() {
+  fetchNewsFeeds: function fetchNewsFeeds(searchText) {
+    var strUrl = searchText == undefined ? backendURL : backendURL + "?search=" + searchText;
     this.serverRequest = $.ajax({
-      url: this.props.url,
+      url: strUrl,
       dataType: 'json',
       cache: true,
       timeout: 5000,
@@ -55,9 +122,10 @@ var TableBox = React.createClass({
           }
         }
         this.setState({ data: data });
+        this.getNewsBoxData();
       }.bind(this),
       error: function (xhr, status, err) {
-        console.log(this.props.url, status, err.toString());
+        console.log(backendURL, status, err.toString());
       }.bind(this)
     });
   },
@@ -85,6 +153,7 @@ var TableBox = React.createClass({
       return React.createElement(
         "div",
         null,
+        React.createElement(NavBox, { callbackParent: this.fetchNewsFeeds }),
         React.createElement(
           "div",
           { id: "carousel-example-generic", className: "carousel slide", "data-ride": "carousel", "data-interval": "false" },
@@ -156,7 +225,6 @@ var NewsBox = React.createClass({
   },
   componentDidMount: function componentDidMount() {
     var _this = this;
-    // keydown event
     $(function () {
       $('body').keydown(function (e) {
         var keyPress = e.which;
@@ -265,4 +333,4 @@ var NewsBox = React.createClass({
   }
 });
 
-ReactDOM.render(React.createElement(TableBox, { url: backendURL }), document.getElementById('content'));
+ReactDOM.render(React.createElement(MainBox, { url: backendURL }), document.getElementById('content'));
