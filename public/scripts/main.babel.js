@@ -75,7 +75,10 @@ var NavBox = React.createClass({
               "span",
               { className: "sr-only" },
               "Toggle navigation"
-            )
+            ),
+            React.createElement("span", { className: "icon-bar" }),
+            React.createElement("span", { className: "icon-bar" }),
+            React.createElement("span", { className: "icon-bar" })
           )
         ),
         React.createElement(
