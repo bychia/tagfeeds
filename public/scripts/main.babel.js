@@ -59,6 +59,10 @@ var NavBox = React.createClass({
         if (e.keyCode == 13) {
           main.props.callbackParent(_this.val());
           _this.blur();
+          var btnNavBarToggle = $("#navbar-toggle");
+          if (btnNavBarToggle.attr("class").indexOf("collapsed") == -1) {
+            btnNavBarToggle.click(); //toggle navbar-toggle
+          }
         }
       });
       $('#searchInput')[0].value = sessionSearchText;
@@ -81,7 +85,7 @@ var NavBox = React.createClass({
           ),
           React.createElement(
             "button",
-            { type: "button", className: "navbar-toggle collapsed", "data-toggle": "collapse", "data-target": "#navbar", "aria-expanded": "false", "aria-controls": "navbar" },
+            { id: "navbar-toggle", type: "button", className: "navbar-toggle collapsed", "data-toggle": "collapse", "data-target": "#navbar", "aria-expanded": "false", "aria-controls": "navbar" },
             React.createElement(
               "span",
               { className: "sr-only" },

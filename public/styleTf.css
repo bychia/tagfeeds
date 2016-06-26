@@ -35,6 +35,7 @@ body{
 input {
   background-color: rgb(51, 51, 51) !important;
   border-color: rgb(68, 68, 68) !important;
+  font-size: 16px; /* hack to prevent zoom in on iphone */
 }
 
 .form-control {
@@ -47,11 +48,6 @@ input {
 .form-control:focus {
   border-color: rgb(68, 68, 68);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(255, 255, 255, 0.2);
-}
-
-/* hack to prevent zoom in on iphone*/
-input[type="text"]:focus {
-  font-size: 16px;
 }
 
 div#newsBg {
