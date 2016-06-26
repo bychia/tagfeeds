@@ -112,8 +112,9 @@ var MainBox = React.createClass({
           }
           this.setState({data:data});
           this.getNewsBoxData();
+        }else {
+          alert("Your search: "+_searchText+" did not return any result.");
         }
-        alert("Your search: "+_searchText+" did not return any result.");
       }.bind(this),
       error: function(xhr, status, err) {
         console.log(backendURL, status, err.toString());
