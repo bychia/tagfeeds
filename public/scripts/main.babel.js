@@ -27,6 +27,15 @@ var isOutdated = function isOutdated(currentTimestamp) {
   }
   return true;
 };
+
+var getSessionSearchText = function getSessionSearchText() {
+  var sessionSearchText = "";
+  if (typeof localStorage !== "undefined" && localStorage.getItem("tfSearchText") !== null) {
+    sessionSearchText = localStorage.getItem("tfSearchText");
+  }
+  return sessionSearchText;
+};
+
 var preloadImage = function preloadImage(arrayOfImages) {
   $(arrayOfImages).each(function () {
     $('<img/>')[0].src = this;
@@ -40,6 +49,7 @@ var NavBox = React.createClass({
   componentDidMount: function componentDidMount() {
     // keyup event
     var main = this;
+    var sessionSearchText = getSessionSearchText();
     $(function () {
       $('#searchForm').submit(function () {
         return false;
@@ -51,6 +61,7 @@ var NavBox = React.createClass({
           _this.blur();
         }
       });
+      $('#searchInput')[0].value = sessionSearchText;
     });
   },
   render: function render() {
@@ -93,7 +104,7 @@ var NavBox = React.createClass({
               React.createElement(
                 "div",
                 { className: "form-group" },
-                React.createElement("input", { id: "searchInput", type: "text", className: "form-control", placeholder: "Search" })
+                React.createElement("input", { id: "searchInput", type: "search", name: "search", className: "form-control", placeholder: "Search" })
               )
             )
           )
@@ -109,7 +120,9 @@ var MainBox = React.createClass({
     return { data: undefined };
   },
   fetchNewsFeeds: function fetchNewsFeeds(searchText) {
-    var strUrl = searchText == undefined ? backendURL : backendURL + "?search=" + searchText;
+    var _searchText = searchText == undefined ? getSessionSearchText() : searchText;
+    var strUrl = _searchText == "" ? backendURL : backendURL + "?search=" + _searchText;
+
     this.serverRequest = $.ajax({
       url: strUrl,
       dataType: 'json',
@@ -120,6 +133,7 @@ var MainBox = React.createClass({
           try {
             localStorage.setItem("tfData", JSON.stringify(data));
             localStorage.setItem("tfLastSaved", new Date().getTime());
+            localStorage.setItem("tfSearchText", _searchText);
           } catch (err) {
             console.log(err.toString());
           }
