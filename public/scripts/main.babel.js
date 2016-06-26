@@ -14,7 +14,7 @@ var dateCooked = function dateCooked(pubDateStr) {
     //less than a week
     return Math.round(differenceDateMS / 86400000) + " days ago";
   } else {
-    return pubDate.toLocaleDateString();
+    return " - " + pubDate.toLocaleDateString();
   }
 };
 var localStorage = window.localStorage;
@@ -100,11 +100,11 @@ var NavBox = React.createClass({
             { className: "nav navbar-nav navbar-left" },
             React.createElement(
               "form",
-              { id: "searchForm", className: "navbar-form navbar-left", autocomplete: "new-password", role: "form" },
+              { id: "searchForm", className: "navbar-form navbar-left", autocomplete: "new-password", role: "form", action: "." },
               React.createElement(
                 "div",
                 { className: "form-group" },
-                React.createElement("input", { id: "searchInput", type: "search", name: "search", className: "form-control", placeholder: "Search" })
+                React.createElement("input", { id: "searchInput", type: "text", className: "form-control", placeholder: "Search" })
               )
             )
           )
@@ -129,17 +129,20 @@ var MainBox = React.createClass({
       cache: true,
       timeout: 5000,
       success: function (data) {
-        if (typeof localStorage !== "undefined") {
-          try {
-            localStorage.setItem("tfData", JSON.stringify(data));
-            localStorage.setItem("tfLastSaved", new Date().getTime());
-            localStorage.setItem("tfSearchText", _searchText);
-          } catch (err) {
-            console.log(err.toString());
+        if (data.length > 0) {
+          if (typeof localStorage !== "undefined") {
+            try {
+              localStorage.setItem("tfData", JSON.stringify(data));
+              localStorage.setItem("tfLastSaved", new Date().getTime());
+              localStorage.setItem("tfSearchText", _searchText);
+            } catch (err) {
+              console.log(err.toString());
+            }
           }
+          this.setState({ data: data });
+          this.getNewsBoxData();
         }
-        this.setState({ data: data });
-        this.getNewsBoxData();
+        alert("Your search: " + _searchText + " did not return any result.");
       }.bind(this),
       error: function (xhr, status, err) {
         console.log(backendURL, status, err.toString());
@@ -318,7 +321,6 @@ var NewsBox = React.createClass({
                   React.createElement(
                     "span",
                     { id: "newsDate" },
-                    " - ",
                     dateCooked(this.state.currentData.pubDate)
                   ),
                   React.createElement("br", null),

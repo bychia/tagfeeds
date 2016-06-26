@@ -9,7 +9,7 @@ var dateCooked = function(pubDateStr){
   }else if(differenceDateMS < 604800000){   //less than a week
     return Math.round(differenceDateMS/86400000) + " days ago";
   }else{
-    return pubDate.toLocaleDateString();
+    return " - " + pubDate.toLocaleDateString();
   }
 }
 var localStorage = window.localStorage;
@@ -74,9 +74,9 @@ var NavBox = React.createClass({
           </div>
           <div id="navbar" className="navbar-collapse collapse" aria-expanded="false">
             <ul className="nav navbar-nav navbar-left">
-            <form id="searchForm" className="navbar-form navbar-left" autocomplete="new-password" role="form">
+            <form id="searchForm" className="navbar-form navbar-left" autocomplete="new-password" role="form" action=".">
               <div className="form-group">
-              <input id="searchInput" type="search" name="search" className="form-control" placeholder="Search"/>
+              <input id="searchInput" type="text" className="form-control" placeholder="Search"/>
               </div>
             </form>
             </ul>
@@ -100,17 +100,20 @@ var MainBox = React.createClass({
       cache: true,
       timeout: 5000,
       success: function(data) {
-        if(typeof(localStorage)!=="undefined"){
-          try {
-            localStorage.setItem("tfData", JSON.stringify(data));
-            localStorage.setItem("tfLastSaved", new Date().getTime());
-            localStorage.setItem("tfSearchText", _searchText);
-          }catch (err) {
-            console.log(err.toString());
+        if(data.length>0){
+          if(typeof(localStorage)!=="undefined"){
+            try {
+              localStorage.setItem("tfData", JSON.stringify(data));
+              localStorage.setItem("tfLastSaved", new Date().getTime());
+              localStorage.setItem("tfSearchText", _searchText);
+            }catch (err) {
+              console.log(err.toString());
+            }
           }
+          this.setState({data:data});
+          this.getNewsBoxData();
         }
-        this.setState({data:data});
-        this.getNewsBoxData();
+        alert("Your search: "+_searchText+" did not return any result.");
       }.bind(this),
       error: function(xhr, status, err) {
         console.log(backendURL, status, err.toString());
@@ -252,7 +255,7 @@ var NewsBox = React.createClass({
                   <span id="newsSrc">
                     {this.state.currentData.newsSrc}
                   </span>
-                  <span id="newsDate" > - {dateCooked(this.state.currentData.pubDate)}
+                  <span id="newsDate">{dateCooked(this.state.currentData.pubDate)}
                   </span>
                   <br/>
                   <span id="newsBody">
