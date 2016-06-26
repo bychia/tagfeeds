@@ -59,6 +59,16 @@ var NavBox = React.createClass({
           }
         });
         $('#searchInput')[0].value=sessionSearchText;
+
+        //trick to remove zoom in on mobile phone
+        $('#searchInput').mousedown(function(){
+          $('meta[name=viewport]').remove();
+          $('head').append('<meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=0">');
+        });
+        $('#searchInput').focusout(function(){
+          $('meta[name=viewport]').remove();
+          $('head').append('<meta name="viewport" content="width=device-width, initial-scale=1.0">' );
+        });
     });
   },
   render: function(){
