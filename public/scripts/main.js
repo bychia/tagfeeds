@@ -36,6 +36,27 @@ var preloadImage = function(arrayOfImages) {
         $('<img/>')[0].src = this;
     });
 }
+
+var isJSON = function(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+var showErrorMsg = function(str){
+  if(str.length>0)
+    alert("Your search: "+str+" did not return any result.");
+  else
+    alert("Your search did not return any result.");
+}
+
+var isSearchInputFocused = function(){
+  return ($("#searchInput").is(":focus"));
+}
+
 var backendURL = "http://tagfeeds.com:3000/newsBing";
 
 var NavBox = React.createClass({
@@ -65,9 +86,21 @@ var NavBox = React.createClass({
           $('meta[name=viewport]').remove();
           $('head').append('<meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=0">');
         });
+
         $('#searchInput').focusout(function(){
           $('meta[name=viewport]').remove();
           $('head').append('<meta name="viewport" content="width=device-width, initial-scale=1.0">' );
+        });
+
+        $('.has-clear input[type="text"]').on('input propertychange', function() {
+          var $this = $(this);
+          var visible = Boolean($this.val());
+          $this.siblings('.form-control-clear').toggleClass('hidden', !visible);
+        }).trigger('propertychange');
+
+        $('.form-control-clear').click(function() {
+          $(this).siblings('input[type="text"]').val('')
+            .trigger('propertychange').focus();
         });
     });
   },
@@ -88,9 +121,10 @@ var NavBox = React.createClass({
           </div>
           <div id="navbar" className="navbar-collapse collapse" aria-expanded="false">
             <ul className="nav navbar-nav navbar-left">
-            <form id="searchForm" className="navbar-form navbar-left" autocomplete="new-password" role="form" action=".">
+            <form id="searchForm" className="navbar-form navbar-left has-feedback has-clear" role="form" action=".">
               <div className="form-group">
-              <input id="searchInput" type="text" className="form-control" placeholder="Search"/>
+                <input id="searchInput" type="text" name="search" className="form-control" placeholder="Search"/>
+                <span className="form-control-clear glyphicon glyphicon-remove-circle form-control-feedback translucent"></span>
               </div>
             </form>
             </ul>
@@ -127,7 +161,7 @@ var MainBox = React.createClass({
           this.setState({data:data});
           this.getNewsBoxData();
         }else {
-          alert("Your search: "+_searchText+" did not return any result.");
+          showErrorMsg(_searchText);
         }
       }.bind(this),
       error: function(xhr, status, err) {
@@ -141,8 +175,10 @@ var MainBox = React.createClass({
       this.fetchNewsFeeds();
     }else{
       var tfData = localStorage.getItem("tfData");
-      if(tfData!=null){
+      if(tfData!=null && isJSON(tfData)){
         this.setState({data:JSON.parse(tfData)});
+      }else{
+        showErrorMsg("");
       }
     }
   },
@@ -156,6 +192,7 @@ var MainBox = React.createClass({
     if(this.state.data==undefined){
       return (
         <div>
+          <NavBox callbackParent={this.fetchNewsFeeds} />
         </div>
       );
     }else{
@@ -229,10 +266,10 @@ var NewsBox = React.createClass({
     $(function(){
         $('body').keydown(function(e){
           var keyPress = e.which;
-          if(keyPress == 37){
+          if(!isSearchInputFocused() && keyPress == 37){
             $("#carousel-left").click();
             _this.getData();
-          }else if(keyPress == 39){
+          }else if(!isSearchInputFocused() && keyPress == 39){
             $("#carousel-right").click();
             _this.getData();
           }

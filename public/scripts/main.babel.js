@@ -41,6 +41,24 @@ var preloadImage = function preloadImage(arrayOfImages) {
     $('<img/>')[0].src = this;
   });
 };
+
+var isJSON = function isJSON(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+};
+
+var showErrorMsg = function showErrorMsg(str) {
+  if (str.length > 0) alert("Your search: " + str + " did not return any result.");else alert("Your search did not return any result.");
+};
+
+var isSearchInputFocused = function isSearchInputFocused() {
+  return $("#searchInput").is(":focus");
+};
+
 var backendURL = "http://tagfeeds.com:3000/newsBing";
 
 var NavBox = React.createClass({
@@ -72,9 +90,20 @@ var NavBox = React.createClass({
         $('meta[name=viewport]').remove();
         $('head').append('<meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=0">');
       });
+
       $('#searchInput').focusout(function () {
         $('meta[name=viewport]').remove();
         $('head').append('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
+      });
+
+      $('.has-clear input[type="text"]').on('input propertychange', function () {
+        var $this = $(this);
+        var visible = Boolean($this.val());
+        $this.siblings('.form-control-clear').toggleClass('hidden', !visible);
+      }).trigger('propertychange');
+
+      $('.form-control-clear').click(function () {
+        $(this).siblings('input[type="text"]').val('').trigger('propertychange').focus();
       });
     });
   },
@@ -114,11 +143,12 @@ var NavBox = React.createClass({
             { className: "nav navbar-nav navbar-left" },
             React.createElement(
               "form",
-              { id: "searchForm", className: "navbar-form navbar-left", autocomplete: "new-password", role: "form", action: "." },
+              { id: "searchForm", className: "navbar-form navbar-left has-feedback has-clear", role: "form", action: "." },
               React.createElement(
                 "div",
                 { className: "form-group" },
-                React.createElement("input", { id: "searchInput", type: "text", className: "form-control", placeholder: "Search" })
+                React.createElement("input", { id: "searchInput", type: "text", name: "search", className: "form-control", placeholder: "Search" }),
+                React.createElement("span", { className: "form-control-clear glyphicon glyphicon-remove-circle form-control-feedback translucent" })
               )
             )
           )
@@ -156,7 +186,7 @@ var MainBox = React.createClass({
           this.setState({ data: data });
           this.getNewsBoxData();
         } else {
-          alert("Your search: " + _searchText + " did not return any result.");
+          showErrorMsg(_searchText);
         }
       }.bind(this),
       error: function (xhr, status, err) {
@@ -170,8 +200,10 @@ var MainBox = React.createClass({
       this.fetchNewsFeeds();
     } else {
       var tfData = localStorage.getItem("tfData");
-      if (tfData != null) {
+      if (tfData != null && isJSON(tfData)) {
         this.setState({ data: JSON.parse(tfData) });
+      } else {
+        showErrorMsg("");
       }
     }
   },
@@ -183,7 +215,11 @@ var MainBox = React.createClass({
   },
   render: function render() {
     if (this.state.data == undefined) {
-      return React.createElement("div", null);
+      return React.createElement(
+        "div",
+        null,
+        React.createElement(NavBox, { callbackParent: this.fetchNewsFeeds })
+      );
     } else {
       return React.createElement(
         "div",
@@ -263,10 +299,10 @@ var NewsBox = React.createClass({
     $(function () {
       $('body').keydown(function (e) {
         var keyPress = e.which;
-        if (keyPress == 37) {
+        if (!isSearchInputFocused() && keyPress == 37) {
           $("#carousel-left").click();
           _this.getData();
-        } else if (keyPress == 39) {
+        } else if (!isSearchInputFocused() && keyPress == 39) {
           $("#carousel-right").click();
           _this.getData();
         }
