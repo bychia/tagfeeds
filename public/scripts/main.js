@@ -99,6 +99,7 @@ var NavBox = React.createClass({
         }).trigger('propertychange');
 
         $('.form-control-clear').click(function() {
+          $('#searchInput').mousedown();
           $(this).siblings('input[type="text"]').val('')
             .trigger('propertychange').focus();
         });
