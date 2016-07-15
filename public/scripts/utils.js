@@ -8,4 +8,4 @@ var infoMsg_LocalStorage = function(){
   }
 }
 
-setTimeout(infoMsg_LocalStorage,3000);
+setTimeout(infoMsg_LocalStorage,1000);
