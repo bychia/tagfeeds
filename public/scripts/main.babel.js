@@ -18,6 +18,7 @@ var dateCooked = function dateCooked(pubDateStr) {
   }
 };
 var localStorage = window.localStorage;
+
 var isOutdated = function isOutdated(currentTimestamp) {
   if (typeof localStorage !== "undefined") {
     var tfLastSaved = localStorage.getItem("tfLastSaved");

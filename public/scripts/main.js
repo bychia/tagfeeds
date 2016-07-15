@@ -13,6 +13,7 @@ var dateCooked = function(pubDateStr){
   }
 }
 var localStorage = window.localStorage;
+
 var isOutdated = function(currentTimestamp){
   if(typeof(localStorage)!=="undefined"){
     var tfLastSaved = localStorage.getItem("tfLastSaved");
