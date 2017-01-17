@@ -2,7 +2,7 @@
 body{
   font-family: helvetica, verdana, sans-serif;
   background-color: rgb(0,0,0);
-  background-image: url("images/backgroundTf.png");
+  background-image: url("../images/backgroundTf.png");
   background-repeat: repeat;
 }
 
@@ -24,6 +24,7 @@ body{
   margin-top: 0 !important;
   margin-right: 0 !important;
   margin-left: 0 !important;
+  margin-bottom: 0 !important;
   padding-left: 0.5rem !important;
   padding-right: 0.5rem !important;
 }
@@ -151,6 +152,12 @@ span#newsDate {
     font-weight:normal;
     color: rgb(153, 153, 153);
     font-style: italic;
+}
+
+#tagCollection{
+  margin-top: 1rem;
+  margin-left: 0.5rem;
+  margin-right: -1rem;
 }
 
 a:link, a:hover, a:visited, a:active{
@@ -298,6 +305,6 @@ a:link, a:hover, a:visited, a:active{
 @media only screen and (min-width: 768px) and (orientation : landscape){
   /* For desktop: */
   .form-control-feedback {
-      right: 0.8rem;
+      display: none;
   }
 }

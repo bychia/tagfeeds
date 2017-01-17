@@ -68,7 +68,6 @@ var NavBox = React.createClass({
   componentDidMount: function componentDidMount() {
     // keyup event
     var main = this;
-    var sessionSearchText = getSessionSearchText();
     $(function () {
       $('#searchForm').submit(function () {
         return false;
@@ -84,7 +83,7 @@ var NavBox = React.createClass({
           }
         }
       });
-      $('#searchInput')[0].value = sessionSearchText;
+      //$('#searchInput')[0].value=sessionSearchText;
 
       //trick to remove zoom in on mobile phone
       $('#searchInput').mousedown(function () {
@@ -110,6 +109,9 @@ var NavBox = React.createClass({
     });
   },
   render: function render() {
+    var sessionSearchText = getSessionSearchText();
+    var tagList = sessionSearchText == undefined ? undefined : sessionSearchText.split(',');
+
     return React.createElement(
       "nav",
       { className: "navbar navbar-inverse navbar-fixed-top" },
@@ -151,6 +153,19 @@ var NavBox = React.createClass({
                 { className: "form-group" },
                 React.createElement("input", { id: "searchInput", type: "text", name: "search", className: "form-control", placeholder: "Search" }),
                 React.createElement("span", { className: "form-control-clear glyphicon glyphicon-remove-circle form-control-feedback translucent" })
+              ),
+              React.createElement(
+                "div",
+                { className: "bootstrap-tagsinput", id: "tagCollection" },
+                tagList.map(function (text) {
+                  var tagId = "tag" + text;
+                  if (text != "") return React.createElement(
+                    "span",
+                    { key: tagId, className: "tag label" },
+                    text,
+                    React.createElement("span", { "data-role": "remove" })
+                  );
+                })
               )
             )
           )
