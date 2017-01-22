@@ -9,7 +9,7 @@ var dateCooked = function(pubDateStr){
   }else if(differenceDateMS < 604800000){   //less than a week
     return Math.round(differenceDateMS/86400000) + " days ago";
   }else{
-    return " - " + pubDate.toLocaleDateString();
+    return pubDate.toLocaleDateString();
   }
 }
 var localStorage = window.localStorage;
@@ -59,16 +59,40 @@ var isSearchInputFocused = function(){
 }
 
 var backendURL = "http://tagfeeds.com:3000/newsBing";
+var keyId = 0;
 
 var NavBox = React.createClass({
+  getData : function(){
+    var sessionSearchText = getSessionSearchText();
+    var tagList = (sessionSearchText == undefined) ? [undefined] : sessionSearchText.split(',');
+    var tagListObj = [];
+    var id=0;
+    tagList.forEach(function(text){
+      tagListObj[id++]={"search":text};
+    });
+    this.setState({tagList:tagListObj});
+  },
+  removeTag : function(text){
+    var tagListObj = this.state.tagList;
+    for(var i=0; i<tagListObj.length; i++){
+      var tag = tagListObj[i];
+      if(tag.search === text){
+        tagListObj.splice(i,1);
+      }
+    }
+    this.setState({tagList:tagListObj});
+  },
   componentDidMount: function(){
     // keyup event
     var main = this;
+    main.getData();
+
     $(function(){
         $('#searchForm').submit(function () {
           return false;
         });
         $('#searchInput').keypress(function(e){
+          keyId++;
           var _this = $(this);
           if(e.keyCode == 13){
             main.props.callbackParent(_this.val());
@@ -79,6 +103,7 @@ var NavBox = React.createClass({
             }
           }
         });
+
         //$('#searchInput')[0].value=sessionSearchText;
 
         //trick to remove zoom in on mobile phone
@@ -105,10 +130,8 @@ var NavBox = React.createClass({
         });
     });
   },
-  render: function(){
-    var sessionSearchText = getSessionSearchText();
-    var tagList = (sessionSearchText == undefined) ? undefined : sessionSearchText.split(',');
 
+  render: function(){
     return (
       <nav className="navbar navbar-inverse navbar-fixed-top">
         <div className="container-fluid">
@@ -132,11 +155,14 @@ var NavBox = React.createClass({
               </div>
               <div className="bootstrap-tagsinput" id="tagCollection">
                 {
-                  tagList.map(function(text) {
-                  var tagId = "tag" + text;
-                  if (text != "")
-                    return(<span key={tagId} className="tag label">{text}<span data-role="remove"></span></span>);
-                  })
+                  this.state!=null && this.state.tagList.map(function(tag,index) {
+                    var text = tag.search;
+                    var id = index + text;
+                    var tagId = "tag:"+id;
+                    var tagRemoveId = "tagRemove:"+id;
+                    if (text != "")
+                       return(<span id={tagId} key={tagId} className="tag label">{text}<span id={tagRemoveId} key={tagRemoveId} data-role="remove" onClick={this.removeTag.bind(this, text)}></span></span>);
+                  },this)
                 }
               </div>
             </form>
@@ -173,6 +199,7 @@ var MainBox = React.createClass({
           }
           this.setState({data:data});
           this.getNewsBoxData();
+          this.getNavBoxData();
         }else {
           showErrorMsg(_searchText);
         }
@@ -201,17 +228,20 @@ var MainBox = React.createClass({
   getNewsBoxData: function(){
     this.refs.newsBox.getData();
   },
+  getNavBoxData: function(){
+    this.refs.navBox.getData();
+  },
   render: function() {
     if(this.state.data==undefined){
       return (
         <div>
-          <NavBox callbackParent={this.fetchNewsFeeds} />
+          <NavBox ref="navBox" callbackParent={this.fetchNewsFeeds}/>
         </div>
       );
     }else{
       return (
         <div>
-          <NavBox callbackParent={this.fetchNewsFeeds} />
+          <NavBox ref="navBox" callbackParent={this.fetchNewsFeeds}/>
           <div id="carousel-example-generic" className="carousel slide" data-ride="carousel" data-interval="false">
             <ol className='carousel-indicators'>
               {
@@ -320,7 +350,7 @@ var NewsBox = React.createClass({
                   <span id="newsSrc">
                     {this.state.currentData.newsSrc}
                   </span>
-                  <span id="newsDate">{dateCooked(this.state.currentData.pubDate)}
+                  <span id="newsDate">{" - "+ dateCooked(this.state.currentData.pubDate)}
                   </span>
                   <br/>
                   <span id="newsBody">

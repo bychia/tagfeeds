@@ -14,7 +14,7 @@ var dateCooked = function dateCooked(pubDateStr) {
     //less than a week
     return Math.round(differenceDateMS / 86400000) + " days ago";
   } else {
-    return " - " + pubDate.toLocaleDateString();
+    return pubDate.toLocaleDateString();
   }
 };
 var localStorage = window.localStorage;
@@ -61,18 +61,42 @@ var isSearchInputFocused = function isSearchInputFocused() {
 };
 
 var backendURL = "http://tagfeeds.com:3000/newsBing";
+var keyId = 0;
 
 var NavBox = React.createClass({
   displayName: "NavBox",
 
+  getData: function getData() {
+    var sessionSearchText = getSessionSearchText();
+    var tagList = sessionSearchText == undefined ? [undefined] : sessionSearchText.split(',');
+    var tagListObj = [];
+    var id = 0;
+    tagList.forEach(function (text) {
+      tagListObj[id++] = { "search": text };
+    });
+    this.setState({ tagList: tagListObj });
+  },
+  removeTag: function removeTag(text) {
+    var tagListObj = this.state.tagList;
+    for (var i = 0; i < tagListObj.length; i++) {
+      var tag = tagListObj[i];
+      if (tag.search === text) {
+        tagListObj.splice(i, 1);
+      }
+    }
+    this.setState({ tagList: tagListObj });
+  },
   componentDidMount: function componentDidMount() {
     // keyup event
     var main = this;
+    main.getData();
+
     $(function () {
       $('#searchForm').submit(function () {
         return false;
       });
       $('#searchInput').keypress(function (e) {
+        keyId++;
         var _this = $(this);
         if (e.keyCode == 13) {
           main.props.callbackParent(_this.val());
@@ -83,6 +107,7 @@ var NavBox = React.createClass({
           }
         }
       });
+
       //$('#searchInput')[0].value=sessionSearchText;
 
       //trick to remove zoom in on mobile phone
@@ -108,10 +133,8 @@ var NavBox = React.createClass({
       });
     });
   },
-  render: function render() {
-    var sessionSearchText = getSessionSearchText();
-    var tagList = sessionSearchText == undefined ? undefined : sessionSearchText.split(',');
 
+  render: function render() {
     return React.createElement(
       "nav",
       { className: "navbar navbar-inverse navbar-fixed-top" },
@@ -157,15 +180,18 @@ var NavBox = React.createClass({
               React.createElement(
                 "div",
                 { className: "bootstrap-tagsinput", id: "tagCollection" },
-                tagList.map(function (text) {
-                  var tagId = "tag" + text;
+                this.state != null && this.state.tagList.map(function (tag, index) {
+                  var text = tag.search;
+                  var id = index + text;
+                  var tagId = "tag:" + id;
+                  var tagRemoveId = "tagRemove:" + id;
                   if (text != "") return React.createElement(
                     "span",
-                    { key: tagId, className: "tag label" },
+                    { id: tagId, key: tagId, className: "tag label" },
                     text,
-                    React.createElement("span", { "data-role": "remove" })
+                    React.createElement("span", { id: tagRemoveId, key: tagRemoveId, "data-role": "remove", onClick: this.removeTag.bind(this, text) })
                   );
-                })
+                }, this)
               )
             )
           )
@@ -202,6 +228,7 @@ var MainBox = React.createClass({
           }
           this.setState({ data: data });
           this.getNewsBoxData();
+          this.getNavBoxData();
         } else {
           showErrorMsg(_searchText);
         }
@@ -230,18 +257,21 @@ var MainBox = React.createClass({
   getNewsBoxData: function getNewsBoxData() {
     this.refs.newsBox.getData();
   },
+  getNavBoxData: function getNavBoxData() {
+    this.refs.navBox.getData();
+  },
   render: function render() {
     if (this.state.data == undefined) {
       return React.createElement(
         "div",
         null,
-        React.createElement(NavBox, { callbackParent: this.fetchNewsFeeds })
+        React.createElement(NavBox, { ref: "navBox", callbackParent: this.fetchNewsFeeds })
       );
     } else {
       return React.createElement(
         "div",
         null,
-        React.createElement(NavBox, { callbackParent: this.fetchNewsFeeds }),
+        React.createElement(NavBox, { ref: "navBox", callbackParent: this.fetchNewsFeeds }),
         React.createElement(
           "div",
           { id: "carousel-example-generic", className: "carousel slide", "data-ride": "carousel", "data-interval": "false" },
@@ -389,7 +419,7 @@ var NewsBox = React.createClass({
                   React.createElement(
                     "span",
                     { id: "newsDate" },
-                    dateCooked(this.state.currentData.pubDate)
+                    " - " + dateCooked(this.state.currentData.pubDate)
                   ),
                   React.createElement("br", null),
                   React.createElement(
