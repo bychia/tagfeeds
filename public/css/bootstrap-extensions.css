@@ -1,0 +1,15 @@
+@media all and (transform-3d), (-webkit-transform-3d) {
+  .carousel-inner > .item {
+    opacity: 1;
+    -webkit-transition: -webkit-transform .6s ease-in-out, opacity 1s ease-in-out !important;
+         -o-transition:      -o-transform .6s ease-in-out, opacity 1s ease-in-out !important;
+            transition:         transform .6s ease-in-out, opacity 1s ease-in-out !important;
+  }
+  .carousel-inner > .item.next,
+  .carousel-inner > .item.active.right {
+    opacity: 0.75;
+  }
+  .carousel-inner > .item.prev,
+  .carousel-inner > .item.active.left {
+    opacity: 0.75;
+  }

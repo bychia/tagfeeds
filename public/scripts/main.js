@@ -31,12 +31,12 @@ var getSessionSearchText = function(){
   }
   return sessionSearchText;
 }
-
-var preloadImage = function(arrayOfImages) {
-    $(arrayOfImages).each(function(){
-        $('<img/>')[0].src = this;
-    });
-}
+//
+// var preloadImage = function(arrayOfImages) {
+//     $(arrayOfImages).each(function(){
+//         $('<img/>')[0].src = this;
+//     });
+// }
 
 var isJSON = function(str) {
     try {
@@ -246,9 +246,10 @@ var MainBox = React.createClass({
             <ol className='carousel-indicators'>
               {
                 this.state.data.map(function(news, index) {
+                  var uniqueId = news.title.length;
                   var handleUpdate = this.getNewsBoxData.bind(this, index);
                   var carouselIndicatorsClassName = (index==0)? "active":" ";
-                  var carouselIndicatorsKeyId = "carouselIndicatorsKeyId"+index;
+                  var carouselIndicatorsKeyId = "carouselIndicatorsKeyId"+uniqueId+"_"+index;
                     return <li data-target="#carousel-example-generic" onClick={handleUpdate} data-slide-to={index} className={carouselIndicatorsClassName} key={carouselIndicatorsKeyId}/>
                 },this)
               }
@@ -256,12 +257,14 @@ var MainBox = React.createClass({
             <div className="carousel-inner" role="listbox">
               {
                 this.state.data.map(function(news, index){
+                  var uniqueId = news.title.length;
+                  var indexId = uniqueId+"_"+index;
                   var carouselInnerDivClassName = (index==0)? "item active":"item";
-                  var parentDivId = "carouselInnerParentDivId"+index;
-                  var imageId = "carouselInnerImageId"+index;
-                  var divId = "carouselInnerDivId"+index;
-                  var newsBgId = "carouselInnerNewsBg"+index;
-                  var blackOverlayId = "carouselInnerBlackOverlay"+index;
+                  var parentDivId = "carouselInnerParentDivId"+indexId;
+                  var imageId = "carouselInnerImageId"+indexId;
+                  var divId = "carouselInnerDivId"+indexId;
+                  var newsBgId = "carouselInnerNewsBg"+indexId;
+                  var blackOverlayId = "carouselInnerBlackOverlay"+indexId;
                   var newsBgStyle = {
                     background: 'url("'+this.state.data[index].image+'")'
                   };
@@ -285,23 +288,14 @@ var MainBox = React.createClass({
 });
 
 var NewsBox = React.createClass({
-  preloadData: function(items, index){
-    var imageCount = items.length;
-    if(imageCount>1){
-      var previousIndex = (index-1<0)? imageCount-1: index-1;
-      var previousImage = items[previousIndex].image;
-      var nextIndex = (index+1 >= imageCount)? 0: index+1;
-      var nextImage = items[nextIndex].image;
-      preloadImage([previousImage, nextImage]);
-    }
-  },
   getData : function(){
     var nextIndex = $('.carousel').find(".active").index();
-    this.preloadData(this.props.data, nextIndex);
+    if(nextIndex==-1){
+      nextIndex = 0;
+    }
     this.setState({index:nextIndex, currentData:this.props.data[nextIndex]});
   },
   getInitialState: function() {
-    this.preloadData(this.props.data, 0);
     return {index:0, currentData:this.props.data[0]};
   },
   componentDidMount: function(){
