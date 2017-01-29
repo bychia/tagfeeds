@@ -108,8 +108,6 @@ var NavBox = React.createClass({
         }
       });
 
-      //$('#searchInput')[0].value=sessionSearchText;
-
       //trick to remove zoom in on mobile phone
       $('#searchInput').mousedown(function () {
         $('meta[name=viewport]').remove();
@@ -335,6 +333,19 @@ var NewsBox = React.createClass({
   getInitialState: function getInitialState() {
     return { index: 0, currentData: this.props.data[0] };
   },
+  updateMetaData: function updateMetaData() {
+    //open graph
+    $('meta[property="og:type"]').attr("content", "article");
+    $('meta[property="og:site_name"]').attr("content", this.state.currentData.newsSrc);
+    $('meta[property="og:title"]').attr("content", "TAGfeeds: " + this.state.currentData.title);
+    $('meta[property="og:image"]').attr("content", this.state.currentData.image);
+    $('meta[property="og:url"]').attr("content", this.state.currentData.link);
+    $('meta[property="og:description"]').attr("content", this.state.currentData.description);
+    //twitter cards
+    $('meta[name="twitter:title"]').attr("content", "TAGfeeds: " + this.state.currentData.title);
+    $('meta[name="twitter:description"]').attr("content", this.state.currentData.description);
+    $('meta[name="twitter:image"]').attr("content", this.state.currentData.image);
+  },
   componentDidMount: function componentDidMount() {
     var _this = this;
     $(function () {
@@ -349,6 +360,10 @@ var NewsBox = React.createClass({
         }
       });
     });
+    this.updateMetaData();
+  },
+  componentDidUpdate: function componentDidUpdate() {
+    this.updateMetaData();
   },
   render: function render() {
     return React.createElement(
@@ -356,7 +371,7 @@ var NewsBox = React.createClass({
       null,
       React.createElement(
         "div",
-        { id: "newsFg" },
+        { id: "newsFg", className: "article" },
         React.createElement(
           "table",
           { id: "news" },
@@ -396,30 +411,38 @@ var NewsBox = React.createClass({
                   "div",
                   null,
                   React.createElement(
-                    "span",
-                    { id: "newsTitle" },
+                    "article",
+                    null,
                     React.createElement(
-                      "a",
-                      { href: this.state.currentData.link, target: "_blank" },
-                      this.state.currentData.title
+                      "span",
+                      { id: "newsTitle" },
+                      React.createElement(
+                        "a",
+                        { href: this.state.currentData.link, target: "_blank" },
+                        this.state.currentData.title
+                      )
+                    ),
+                    React.createElement("br", null),
+                    React.createElement(
+                      "span",
+                      { id: "newsSrc" },
+                      this.state.currentData.newsSrc
+                    ),
+                    React.createElement(
+                      "span",
+                      { id: "newsDate" },
+                      " - " + dateCooked(this.state.currentData.pubDate)
+                    ),
+                    React.createElement("br", null),
+                    React.createElement(
+                      "span",
+                      { id: "newsBody", className: "article1" },
+                      React.createElement(
+                        "article1",
+                        null,
+                        this.state.currentData.description
+                      )
                     )
-                  ),
-                  React.createElement("br", null),
-                  React.createElement(
-                    "span",
-                    { id: "newsSrc" },
-                    this.state.currentData.newsSrc
-                  ),
-                  React.createElement(
-                    "span",
-                    { id: "newsDate" },
-                    " - " + dateCooked(this.state.currentData.pubDate)
-                  ),
-                  React.createElement("br", null),
-                  React.createElement(
-                    "span",
-                    { id: "newsBody" },
-                    this.state.currentData.description
                   ),
                   React.createElement("br", null),
                   React.createElement(

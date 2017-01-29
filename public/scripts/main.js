@@ -104,8 +104,6 @@ var NavBox = React.createClass({
           }
         });
 
-        //$('#searchInput')[0].value=sessionSearchText;
-
         //trick to remove zoom in on mobile phone
         $('#searchInput').mousedown(function(){
           $('meta[name=viewport]').remove();
@@ -298,6 +296,19 @@ var NewsBox = React.createClass({
   getInitialState: function() {
     return {index:0, currentData:this.props.data[0]};
   },
+  updateMetaData: function(){
+    //open graph
+    $('meta[property="og:type"]').attr("content","article");
+    $('meta[property="og:site_name"]').attr("content",this.state.currentData.newsSrc);
+    $('meta[property="og:title"]').attr("content","TAGfeeds: "+this.state.currentData.title);
+    $('meta[property="og:image"]').attr("content",this.state.currentData.image);
+    $('meta[property="og:url"]').attr("content",this.state.currentData.link);
+    $('meta[property="og:description"]').attr("content",this.state.currentData.description);
+    //twitter cards
+    $('meta[name="twitter:title"]').attr("content","TAGfeeds: "+this.state.currentData.title);
+    $('meta[name="twitter:description"]').attr("content",this.state.currentData.description);
+    $('meta[name="twitter:image"]').attr("content",this.state.currentData.image);
+  },
   componentDidMount: function(){
     var _this = this;
     $(function(){
@@ -312,11 +323,15 @@ var NewsBox = React.createClass({
           }
         });
     });
+    this.updateMetaData();
+  },
+  componentDidUpdate: function(){
+    this.updateMetaData();
   },
   render: function() {
     return (
       <div>
-      <div id="newsFg">
+      <div id="newsFg" className="article">
         <table id="news">
           <colgroup>
             <col className="table-col"/>
@@ -337,19 +352,21 @@ var NewsBox = React.createClass({
               </td>
               <td id="newsRow">
                 <div>
-                  <span id="newsTitle">
-                    <a href={this.state.currentData.link} target="_blank">{this.state.currentData.title}</a>
-                  </span>
-                  <br/>
-                  <span id="newsSrc">
-                    {this.state.currentData.newsSrc}
-                  </span>
-                  <span id="newsDate">{" - "+ dateCooked(this.state.currentData.pubDate)}
-                  </span>
-                  <br/>
-                  <span id="newsBody">
-                    {this.state.currentData.description}
-                  </span>
+                  <article>
+                    <span id="newsTitle">
+                      <a href={this.state.currentData.link} target="_blank">{this.state.currentData.title}</a>
+                    </span>
+                    <br/>
+                    <span id="newsSrc">
+                      {this.state.currentData.newsSrc}
+                    </span>
+                    <span id="newsDate">{" - "+ dateCooked(this.state.currentData.pubDate)}
+                    </span>
+                    <br/>
+                    <span id="newsBody" className="article1">
+                      <article1>{this.state.currentData.description}</article1>
+                    </span>
+                  </article>
                   <br/>
                   <span id="apiProvider"><img src="images/brandBing.png"/></span>
                 </div>

@@ -127,11 +127,6 @@ span{
   position:relative;
 }
 
-span#apiProvider {
-  top: 0.3rem;
-  bottom: 0.3rem;
-}
-
 div#newsFg{
   position: absolute;
   left:0;
