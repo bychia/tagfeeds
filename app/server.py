@@ -8,7 +8,7 @@ from flask import Flask, Response, request
 
 from xml.dom import minidom
 import urllib #python2.7
-
+import urlparse
 
 LOG_FILENAME = 'access_logs.log'
 STR_URL = 'http://www.bing.com/news?format=RSS'
@@ -24,6 +24,16 @@ handler = logging.handlers.RotatingFileHandler(
     )
 app.logger.addHandler(handler)
 
+
+def parseUrl(url):
+    parsed = urlparse.urlparse(url)
+    try:
+        parsedUrl = urlparse.parse_qs(parsed.query)['url']
+        return parsedUrl[0]
+    except:
+        return url
+
+
 def formatData(item):
     imageUrl = "" if len(item.getElementsByTagName("News:Image"))==0 else item.getElementsByTagName("News:Image")[0].firstChild.nodeValue+STR_PICSIZE
     title = "" if len(item.getElementsByTagName("title"))==0 else item.getElementsByTagName("title")[0].firstChild.nodeValue
@@ -33,7 +43,7 @@ def formatData(item):
     newsSrc = "" if len(item.getElementsByTagName("News:Source"))==0 else item.getElementsByTagName("News:Source")[0].firstChild.nodeValue
 
     news = {   "title": title,
-        "link": link,
+        "link": parseUrl(link),
         "description": description,
         "pubDate": pubDate,
         "image": imageUrl,
