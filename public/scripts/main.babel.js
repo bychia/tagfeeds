@@ -60,7 +60,7 @@ var isSearchInputFocused = function isSearchInputFocused() {
   return $("#searchInput").is(":focus");
 };
 
-var backendURL = "http://tagfeeds.com:3000/newsBing";
+var backendURL = "http://tagfeeds.com:3001/newsBing";
 var keyId = 0;
 
 var NavBox = React.createClass({
