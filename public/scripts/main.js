@@ -52,7 +52,7 @@ var isSearchInputFocused = function(){
   return ($("#searchInput").is(":focus"));
 }
 
-var backendURL = "http://app.tagfeeds.com/newsBing";
+var backendURL = "http://api.tagfeeds.com/newsBing";
 var keyId = 0;
 
 var NavBox = React.createClass({
