@@ -10,7 +10,7 @@ from xml.dom import minidom
 import urllib #python2.7
 import urlparse
 
-LOG_FILENAME = 'access_logs.log'
+LOG_FILENAME = '/var/log/api.tagfeeds.com.log'
 STR_URL = 'http://www.bing.com/news?format=RSS'
 STR_PICSIZE ="&w=1500&h=1000&c=7&rs=2"
 
