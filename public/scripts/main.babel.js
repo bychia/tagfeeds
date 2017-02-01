@@ -36,12 +36,6 @@ var getSessionSearchText = function getSessionSearchText() {
   }
   return sessionSearchText;
 };
-//
-// var preloadImage = function(arrayOfImages) {
-//     $(arrayOfImages).each(function(){
-//         $('<img/>')[0].src = this;
-//     });
-// }
 
 var isJSON = function isJSON(str) {
   try {
@@ -60,7 +54,7 @@ var isSearchInputFocused = function isSearchInputFocused() {
   return $("#searchInput").is(":focus");
 };
 
-var backendURL = "http://tagfeeds.com/api/newsBing";
+var backendURL = "http://app.tagfeeds.com/newsBing";
 var keyId = 0;
 
 var NavBox = React.createClass({

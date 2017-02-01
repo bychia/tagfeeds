@@ -92,4 +92,4 @@ def newsBing_handler():
 
 
 if __name__ == '__main__':
-    app.run(host='localhost',port=int(os.environ.get("PORT", 3000)),threaded=True)
+    app.run(host='localhost',port=int(os.environ.get("PORT", 3001)),threaded=True)
