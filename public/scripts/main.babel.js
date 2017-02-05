@@ -1,5 +1,7 @@
 "use strict";
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var dateCooked = function dateCooked(pubDateStr) {
   var pubDate = new Date(pubDateStr);
   var currentDate = new Date();
@@ -19,22 +21,60 @@ var dateCooked = function dateCooked(pubDateStr) {
 };
 var localStorage = window.localStorage;
 
+var isEmpty = function isEmpty(text) {
+  if (text == null || text == "") return true;
+  return false;
+};
+
+var isUndefined = function isUndefined(obj) {
+  if (obj === undefined) {
+    return true;
+  }
+  return false;
+};
+
 var isOutdated = function isOutdated(currentTimestamp) {
-  if (typeof localStorage !== "undefined") {
+  // console.log("getSessionSearchText::"+getSessionSearchText());
+  // console.log("getSessionRefreshSearch::"+getSessionRefreshSearch());
+  if (!isUndefined(typeof localStorage === "undefined" ? "undefined" : _typeof(localStorage)) && getSessionRefreshSearch() == "true") {
+    // console.log(">"+!isUndefined(typeof(localStorage)));
+    return true;
+  } else if (getSessionSearchText() != getURLRequestSearchText()) {
+    return true;
+  } else {
     var tfLastSaved = localStorage.getItem("tfLastSaved");
     if (tfLastSaved != null) {
+      // console.log(">>"+tfLastSaved);
       return (currentTimestamp - tfLastSaved) / 3600000 > 1; // is outdated after an hour
     }
   }
   return true;
 };
 
+var getURLRequestSearchText = function getURLRequestSearchText() {
+  var urlRequestSearchText = "";
+  var winLocation = window.location;
+  var urlRequestPath = winLocation.pathname.substr(1);
+  if (urlRequestPath.length > 0) {
+    urlRequestSearchText = urlRequestPath;
+  }
+  return urlRequestSearchText;
+};
+
 var getSessionSearchText = function getSessionSearchText() {
   var sessionSearchText = "";
-  if (typeof localStorage !== "undefined" && localStorage.getItem("tfSearchText") !== null) {
+  if (!isUndefined(typeof localStorage === "undefined" ? "undefined" : _typeof(localStorage)) && localStorage.getItem("tfSearchText") !== null) {
     sessionSearchText = localStorage.getItem("tfSearchText");
   }
   return sessionSearchText;
+};
+
+var getSessionRefreshSearch = function getSessionRefreshSearch() {
+  var sessionSearchStatus = undefined;
+  if (!isUndefined(typeof localStorage === "undefined" ? "undefined" : _typeof(localStorage)) && localStorage.getItem("tfRefreshSearch") !== null) {
+    sessionSearchStatus = localStorage.getItem("tfRefreshSearch");
+  }
+  return sessionSearchStatus;
 };
 
 var isJSON = function isJSON(str) {
@@ -74,14 +114,13 @@ var NavBox = React.createClass({
     var tagListObj = this.state.tagList;
     for (var i = 0; i < tagListObj.length; i++) {
       var tag = tagListObj[i];
-      if (tag.search === text) {
+      if (tag.search === encodeURI(text)) {
         tagListObj.splice(i, 1);
       }
     }
     this.setState({ tagList: tagListObj });
   },
   componentDidMount: function componentDidMount() {
-    // keyup event
     var main = this;
     main.getData();
 
@@ -89,16 +128,27 @@ var NavBox = React.createClass({
       $('#searchForm').submit(function () {
         return false;
       });
+      // Implement the form post behavior
       $('#searchInput').keypress(function (e) {
-        keyId++;
+        // keyId++;
         var _this = $(this);
         if (e.keyCode == 13) {
-          main.props.callbackParent(_this.val());
-          _this.blur();
-          var btnNavBarToggle = $("#navbar-toggle");
-          if (btnNavBarToggle.attr("class").indexOf("collapsed") == -1) {
-            btnNavBarToggle.click(); //toggle navbar-toggle
-          }
+          // update the localStorage
+          var _searchText = _this.val();
+          // console.log("_searchText"+_searchText);
+          if (_searchText != getURLRequestSearchText()) localStorage.setItem("tfRefreshSearch", true);else localStorage.setItem("tfRefreshSearch", false);
+
+          localStorage.setItem("tfSearchText", _searchText);
+          // redirect
+          var winLocation = window.location.origin;
+          window.location.replace(winLocation + "/" + _searchText);
+
+          // main.props.callbackParent(_this.val());
+          // _this.blur();
+          // var btnNavBarToggle = $("#navbar-toggle");
+          // if(btnNavBarToggle.attr("class").indexOf("collapsed")==-1){
+          //   btnNavBarToggle.click(); //toggle navbar-toggle
+          // }
         }
       });
 
@@ -173,7 +223,7 @@ var NavBox = React.createClass({
                 "div",
                 { className: "bootstrap-tagsinput", id: "tagCollection" },
                 this.state != null && this.state.tagList.map(function (tag, index) {
-                  var text = tag.search;
+                  var text = decodeURI(tag.search);
                   var id = index + text;
                   var tagId = "tag:" + id;
                   var tagRemoveId = "tagRemove:" + id;
@@ -199,8 +249,25 @@ var MainBox = React.createClass({
     return { data: undefined };
   },
   fetchNewsFeeds: function fetchNewsFeeds(searchText) {
-    var _searchText = searchText == undefined ? getSessionSearchText() : searchText;
-    var strUrl = _searchText == "" ? backendURL : backendURL + "?search=" + _searchText;
+    var _searchText = searchText;
+    var _urlRequestSearchText = getURLRequestSearchText();
+    var _sessionSearchText = getSessionSearchText();
+    var _refreshSearch = getSessionRefreshSearch();
+
+    if (isEmpty(searchText)) {
+      if (!isEmpty(_urlRequestSearchText)) {
+        _searchText = _urlRequestSearchText;
+      } else {
+        _searchText = _sessionSearchText;
+      }
+    }
+    //
+    // console.log("_refreshSearch:"+_refreshSearch);
+    // console.log("searchText:"+searchText);
+    // console.log("_urlRequestSearchText:"+_urlRequestSearchText);
+    // console.log("_sessionSearchText:"+_sessionSearchText);
+    // console.log("_searchText:"+_searchText);
+    var strUrl = isEmpty(_searchText) ? backendURL : backendURL + "?search=" + _searchText;
 
     this.serverRequest = $.ajax({
       url: strUrl,
@@ -209,11 +276,12 @@ var MainBox = React.createClass({
       timeout: 5000,
       success: function (data) {
         if (data.length > 0) {
-          if (typeof localStorage !== "undefined") {
+          if (!isUndefined(typeof localStorage === "undefined" ? "undefined" : _typeof(localStorage))) {
             try {
               localStorage.setItem("tfData", JSON.stringify(data));
               localStorage.setItem("tfLastSaved", new Date().getTime());
               localStorage.setItem("tfSearchText", _searchText);
+              localStorage.setItem("tfRefreshSearch", false);
             } catch (err) {
               console.log(err.toString());
             }
@@ -233,8 +301,10 @@ var MainBox = React.createClass({
   componentDidMount: function componentDidMount() {
     var currentTimestamp = new Date().getTime();
     if (isOutdated(currentTimestamp)) {
+      // console.log("outdated");
       this.fetchNewsFeeds();
     } else {
+      // console.log("not outdated");
       var tfData = localStorage.getItem("tfData");
       if (tfData != null && isJSON(tfData)) {
         this.setState({ data: JSON.parse(tfData) });

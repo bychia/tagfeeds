@@ -8,8 +8,16 @@ app.get('/', function(req, res){
     res.sendFile(path.join(__dirname, './public', 'index.html'));
 });
 
-app.get('/*', function(req, res){
+app.get('/:searchText', function(req, res){
     res.sendFile(path.join(__dirname, './public', 'index.html'));
+});
+
+app.get('*', function(req, res){
+    // var totalLevel = req.path.split("/").length - 1;
+    // var strTotalLevel = Array(totalLevel).join( "../" );
+    // res.redirect(strTotalLevel+'index.html');
+    res.status('404').send("<h3>Invalid News</h3><p>We can't find news based on your search.</p>");
+    return;
 });
 
 app.listen(3000);
