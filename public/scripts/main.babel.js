@@ -1,104 +1,9 @@
-"use strict";
+'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var dateCooked = function dateCooked(pubDateStr) {
-  var pubDate = new Date(pubDateStr);
-  var currentDate = new Date();
-  var differenceDateMS = currentDate - pubDate;
-  if (differenceDateMS < 3600000) {
-    //less than an hour
-    return Math.round(differenceDateMS / 60000) + " minutes ago";
-  } else if (differenceDateMS < 86400000) {
-    //less than a day
-    return Math.round(differenceDateMS / 3600000) + " hours ago";
-  } else if (differenceDateMS < 604800000) {
-    //less than a week
-    return Math.round(differenceDateMS / 86400000) + " days ago";
-  } else {
-    return pubDate.toLocaleDateString();
-  }
-};
-var localStorage = window.localStorage;
-
-var isEmpty = function isEmpty(text) {
-  if (text == null || text == "") return true;
-  return false;
-};
-
-var isUndefined = function isUndefined(obj) {
-  if (obj === undefined) {
-    return true;
-  }
-  return false;
-};
-
-var isOutdated = function isOutdated(currentTimestamp) {
-  // console.log("getSessionSearchText::"+getSessionSearchText());
-  // console.log("getSessionRefreshSearch::"+getSessionRefreshSearch());
-  if (!isUndefined(typeof localStorage === "undefined" ? "undefined" : _typeof(localStorage)) && getSessionRefreshSearch() == "true") {
-    // console.log(">"+!isUndefined(typeof(localStorage)));
-    return true;
-  } else if (getSessionSearchText() != getURLRequestSearchText()) {
-    return true;
-  } else {
-    var tfLastSaved = localStorage.getItem("tfLastSaved");
-    if (tfLastSaved != null) {
-      // console.log(">>"+tfLastSaved);
-      return (currentTimestamp - tfLastSaved) / 3600000 > 1; // is outdated after an hour
-    }
-  }
-  return true;
-};
-
-var getURLRequestSearchText = function getURLRequestSearchText() {
-  var urlRequestSearchText = "";
-  var winLocation = window.location;
-  var urlRequestPath = winLocation.pathname.substr(1);
-  if (urlRequestPath.length > 0) {
-    urlRequestSearchText = urlRequestPath;
-  }
-  return urlRequestSearchText;
-};
-
-var getSessionSearchText = function getSessionSearchText() {
-  var sessionSearchText = "";
-  if (!isUndefined(typeof localStorage === "undefined" ? "undefined" : _typeof(localStorage)) && localStorage.getItem("tfSearchText") !== null) {
-    sessionSearchText = localStorage.getItem("tfSearchText");
-  }
-  return sessionSearchText;
-};
-
-var getSessionRefreshSearch = function getSessionRefreshSearch() {
-  var sessionSearchStatus = undefined;
-  if (!isUndefined(typeof localStorage === "undefined" ? "undefined" : _typeof(localStorage)) && localStorage.getItem("tfRefreshSearch") !== null) {
-    sessionSearchStatus = localStorage.getItem("tfRefreshSearch");
-  }
-  return sessionSearchStatus;
-};
-
-var isJSON = function isJSON(str) {
-  try {
-    JSON.parse(str);
-  } catch (e) {
-    return false;
-  }
-  return true;
-};
-
-var showErrorMsg = function showErrorMsg(str) {
-  if (str.length > 0) alert("Your search: " + str + " did not return any result.");else alert("Your search did not return any result.");
-};
-
-var isSearchInputFocused = function isSearchInputFocused() {
-  return $("#searchInput").is(":focus");
-};
-
-var backendURL = "http://api.tagfeeds.com/newsBing";
-var keyId = 0;
-
 var NavBox = React.createClass({
-  displayName: "NavBox",
+  displayName: 'NavBox',
 
   getData: function getData() {
     var sessionSearchText = getSessionSearchText();
@@ -135,10 +40,9 @@ var NavBox = React.createClass({
         if (e.keyCode == 13) {
           // update the localStorage
           var _searchText = _this.val();
-          // console.log("_searchText"+_searchText);
           if (_searchText != getURLRequestSearchText()) localStorage.setItem("tfRefreshSearch", true);else localStorage.setItem("tfRefreshSearch", false);
 
-          localStorage.setItem("tfSearchText", _searchText);
+          //localStorage.setItem("tfSearchText", _searchText);
           // redirect
           var winLocation = window.location.origin;
           window.location.replace(winLocation + "/" + _searchText);
@@ -178,60 +82,60 @@ var NavBox = React.createClass({
 
   render: function render() {
     return React.createElement(
-      "nav",
-      { className: "navbar navbar-inverse navbar-fixed-top" },
+      'nav',
+      { className: 'navbar navbar-inverse navbar-fixed-top' },
       React.createElement(
-        "div",
-        { className: "container-fluid" },
+        'div',
+        { className: 'container-fluid' },
         React.createElement(
-          "div",
-          { className: "navbar-header" },
+          'div',
+          { className: 'navbar-header' },
           React.createElement(
-            "a",
-            { className: "navbar-brand", href: "#" },
-            React.createElement("img", { src: "images/brandTf.png" })
+            'a',
+            { className: 'navbar-brand', href: '#' },
+            React.createElement('img', { src: 'images/brandTf.png' })
           ),
           React.createElement(
-            "button",
-            { id: "navbar-toggle", type: "button", className: "navbar-toggle collapsed", "data-toggle": "collapse", "data-target": "#navbar", "aria-expanded": "false", "aria-controls": "navbar" },
+            'button',
+            { id: 'navbar-toggle', type: 'button', className: 'navbar-toggle collapsed', 'data-toggle': 'collapse', 'data-target': '#navbar', 'aria-expanded': 'false', 'aria-controls': 'navbar' },
             React.createElement(
-              "span",
-              { className: "sr-only" },
-              "Toggle navigation"
+              'span',
+              { className: 'sr-only' },
+              'Toggle navigation'
             ),
-            React.createElement("span", { className: "icon-bar" }),
-            React.createElement("span", { className: "icon-bar" }),
-            React.createElement("span", { className: "icon-bar" })
+            React.createElement('span', { className: 'icon-bar' }),
+            React.createElement('span', { className: 'icon-bar' }),
+            React.createElement('span', { className: 'icon-bar' })
           )
         ),
         React.createElement(
-          "div",
-          { id: "navbar", className: "navbar-collapse collapse", "aria-expanded": "false" },
+          'div',
+          { id: 'navbar', className: 'navbar-collapse collapse', 'aria-expanded': 'false' },
           React.createElement(
-            "ul",
-            { className: "nav navbar-nav navbar-left" },
+            'ul',
+            { className: 'nav navbar-nav navbar-left' },
             React.createElement(
-              "form",
-              { id: "searchForm", className: "navbar-form navbar-left has-feedback has-clear", role: "form", action: "." },
+              'form',
+              { id: 'searchForm', className: 'navbar-form navbar-left has-feedback has-clear', role: 'form', action: '.' },
               React.createElement(
-                "div",
-                { className: "form-group" },
-                React.createElement("input", { id: "searchInput", type: "text", name: "search", className: "form-control", placeholder: "Search" }),
-                React.createElement("span", { className: "form-control-clear glyphicon glyphicon-remove-circle form-control-feedback translucent" })
+                'div',
+                { className: 'form-group' },
+                React.createElement('input', { id: 'searchInput', type: 'text', name: 'search', className: 'form-control', placeholder: 'Search' }),
+                React.createElement('span', { className: 'form-control-clear glyphicon glyphicon-remove-circle form-control-feedback translucent' })
               ),
               React.createElement(
-                "div",
-                { className: "bootstrap-tagsinput", id: "tagCollection" },
+                'div',
+                { className: 'bootstrap-tagsinput', id: 'tagCollection' },
                 this.state != null && this.state.tagList.map(function (tag, index) {
                   var text = decodeURI(tag.search);
                   var id = index + text;
                   var tagId = "tag:" + id;
                   var tagRemoveId = "tagRemove:" + id;
                   if (text != "") return React.createElement(
-                    "span",
-                    { id: tagId, key: tagId, className: "tag label" },
+                    'span',
+                    { id: tagId, key: tagId, className: 'tag label' },
                     text,
-                    React.createElement("span", { id: tagRemoveId, key: tagRemoveId, "data-role": "remove", onClick: this.removeTag.bind(this, text) })
+                    React.createElement('span', { id: tagRemoveId, key: tagRemoveId, 'data-role': 'remove', onClick: this.removeTag.bind(this, text) })
                   );
                 }, this)
               )
@@ -243,7 +147,7 @@ var NavBox = React.createClass({
   }
 });
 var MainBox = React.createClass({
-  displayName: "MainBox",
+  displayName: 'MainBox',
 
   getInitialState: function getInitialState() {
     return { data: undefined };
@@ -276,7 +180,7 @@ var MainBox = React.createClass({
       timeout: 5000,
       success: function (data) {
         if (data.length > 0) {
-          if (!isUndefined(typeof localStorage === "undefined" ? "undefined" : _typeof(localStorage))) {
+          if (!isUndefined(typeof localStorage === 'undefined' ? 'undefined' : _typeof(localStorage))) {
             try {
               localStorage.setItem("tfData", JSON.stringify(data));
               localStorage.setItem("tfLastSaved", new Date().getTime());
@@ -300,6 +204,7 @@ var MainBox = React.createClass({
   },
   componentDidMount: function componentDidMount() {
     var currentTimestamp = new Date().getTime();
+    // console.log(window.localStorage);
     if (isOutdated(currentTimestamp)) {
       // console.log("outdated");
       this.fetchNewsFeeds();
@@ -325,32 +230,32 @@ var MainBox = React.createClass({
   render: function render() {
     if (this.state.data == undefined) {
       return React.createElement(
-        "div",
+        'div',
         null,
-        React.createElement(NavBox, { ref: "navBox", callbackParent: this.fetchNewsFeeds })
+        React.createElement(NavBox, { ref: 'navBox', callbackParent: this.fetchNewsFeeds })
       );
     } else {
       return React.createElement(
-        "div",
+        'div',
         null,
-        React.createElement(NavBox, { ref: "navBox", callbackParent: this.fetchNewsFeeds }),
+        React.createElement(NavBox, { ref: 'navBox', callbackParent: this.fetchNewsFeeds }),
         React.createElement(
-          "div",
-          { id: "carousel-example-generic", className: "carousel slide", "data-ride": "carousel", "data-interval": "false" },
+          'div',
+          { id: 'carousel-example-generic', className: 'carousel slide', 'data-ride': 'carousel', 'data-interval': 'false' },
           React.createElement(
-            "ol",
-            { className: "carousel-indicators" },
+            'ol',
+            { className: 'carousel-indicators' },
             this.state.data.map(function (news, index) {
               var uniqueId = news.title.length;
               var handleUpdate = this.getNewsBoxData.bind(this, index);
               var carouselIndicatorsClassName = index == 0 ? "active" : " ";
               var carouselIndicatorsKeyId = "carouselIndicatorsKeyId" + uniqueId + "_" + index;
-              return React.createElement("li", { "data-target": "#carousel-example-generic", onClick: handleUpdate, "data-slide-to": index, className: carouselIndicatorsClassName, key: carouselIndicatorsKeyId });
+              return React.createElement('li', { 'data-target': '#carousel-example-generic', onClick: handleUpdate, 'data-slide-to': index, className: carouselIndicatorsClassName, key: carouselIndicatorsKeyId });
             }, this)
           ),
           React.createElement(
-            "div",
-            { className: "carousel-inner", role: "listbox" },
+            'div',
+            { className: 'carousel-inner', role: 'listbox' },
             this.state.data.map(function (news, index) {
               var uniqueId = news.title.length;
               var indexId = uniqueId + "_" + index;
@@ -365,27 +270,27 @@ var MainBox = React.createClass({
               };
 
               return React.createElement(
-                "div",
+                'div',
                 { className: carouselInnerDivClassName, key: parentDivId },
-                React.createElement("img", { src: "images/spacer.png", height: "100%", width: "100%", key: imageId }),
+                React.createElement('img', { src: 'images/spacer.png', height: '100%', width: '100%', key: imageId }),
                 React.createElement(
-                  "div",
+                  'div',
                   { key: divId },
-                  React.createElement("div", { id: "newsBg", style: newsBgStyle, key: newsBgId }),
-                  React.createElement("div", { id: "blackOverlay", key: blackOverlayId })
+                  React.createElement('div', { id: 'newsBg', style: newsBgStyle, key: newsBgId }),
+                  React.createElement('div', { id: 'blackOverlay', key: blackOverlayId })
                 )
               );
             }, this)
           )
         ),
-        React.createElement(NewsBox, { ref: "newsBox", data: this.state.data })
+        React.createElement(NewsBox, { ref: 'newsBox', data: this.state.data })
       );
     }
   }
 });
 
 var NewsBox = React.createClass({
-  displayName: "NewsBox",
+  displayName: 'NewsBox',
 
   getData: function getData() {
     var nextIndex = $('.carousel').find(".active").index();
@@ -431,102 +336,102 @@ var NewsBox = React.createClass({
   },
   render: function render() {
     return React.createElement(
-      "div",
+      'div',
       null,
       React.createElement(
-        "div",
-        { id: "newsFg", className: "article" },
+        'div',
+        { id: 'newsFg', className: 'article' },
         React.createElement(
-          "table",
-          { id: "news" },
+          'table',
+          { id: 'news' },
           React.createElement(
-            "colgroup",
+            'colgroup',
             null,
-            React.createElement("col", { className: "table-col" }),
-            React.createElement("col", null),
-            React.createElement("col", { className: "table-col" })
+            React.createElement('col', { className: 'table-col' }),
+            React.createElement('col', null),
+            React.createElement('col', { className: 'table-col' })
           ),
           React.createElement(
-            "tbody",
+            'tbody',
             null,
             React.createElement(
-              "tr",
+              'tr',
               null,
-              React.createElement("td", null),
+              React.createElement('td', null),
               React.createElement(
-                "td",
-                { id: "logoRow" },
-                React.createElement("img", { src: "images/logoTfMed.png" })
+                'td',
+                { id: 'logoRow' },
+                React.createElement('img', { src: 'images/logoTfMed.png' })
               ),
-              React.createElement("td", null)
+              React.createElement('td', null)
             ),
             React.createElement(
-              "tr",
-              { id: "newsSection" },
+              'tr',
+              { id: 'newsSection' },
               React.createElement(
-                "td",
+                'td',
                 null,
-                React.createElement("span", { className: "glyphicon glyphicon-chevron-left glyphicon-padding", "aria-hidden": "true" })
+                React.createElement('span', { className: 'glyphicon glyphicon-chevron-left glyphicon-padding', 'aria-hidden': 'true' })
               ),
               React.createElement(
-                "td",
-                { id: "newsRow" },
+                'td',
+                { id: 'newsRow' },
                 React.createElement(
-                  "div",
+                  'div',
                   null,
                   React.createElement(
-                    "article",
+                    'article',
                     null,
                     React.createElement(
-                      "span",
-                      { id: "newsTitle" },
+                      'span',
+                      { id: 'newsTitle' },
                       React.createElement(
-                        "a",
-                        { href: this.state.currentData.link, target: "_blank" },
+                        'a',
+                        { href: this.state.currentData.link, target: '_blank' },
                         this.state.currentData.title
                       )
                     ),
-                    React.createElement("br", null),
+                    React.createElement('br', null),
                     React.createElement(
-                      "span",
-                      { id: "newsSrc" },
+                      'span',
+                      { id: 'newsSrc' },
                       this.state.currentData.newsSrc
                     ),
                     React.createElement(
-                      "span",
-                      { id: "newsDate" },
+                      'span',
+                      { id: 'newsDate' },
                       " - " + dateCooked(this.state.currentData.pubDate)
                     ),
-                    React.createElement("br", null),
+                    React.createElement('br', null),
                     React.createElement(
-                      "span",
-                      { id: "newsBody", className: "article1" },
+                      'span',
+                      { id: 'newsBody', className: 'article1' },
                       React.createElement(
-                        "article1",
+                        'article1',
                         null,
                         this.state.currentData.description
                       )
                     )
                   ),
-                  React.createElement("br", null),
+                  React.createElement('br', null),
                   React.createElement(
-                    "span",
-                    { id: "apiProvider" },
-                    React.createElement("img", { src: "images/brandBing.png" })
+                    'span',
+                    { id: 'apiProvider' },
+                    React.createElement('img', { src: 'images/brandBing.png' })
                   )
                 )
               ),
               React.createElement(
-                "td",
+                'td',
                 null,
-                React.createElement("span", { className: "glyphicon glyphicon-chevron-right glyphicon-padding", "aria-hidden": "true" })
+                React.createElement('span', { className: 'glyphicon glyphicon-chevron-right glyphicon-padding', 'aria-hidden': 'true' })
               )
             )
           )
         )
       ),
-      React.createElement("a", { id: "carousel-left", className: "left carousel-control", href: "#carousel-example-generic", role: "button", "data-slide": "prev", onClick: this.getData }),
-      React.createElement("a", { id: "carousel-right", className: "right carousel-control", href: "#carousel-example-generic", role: "button", "data-slide": "next", onClick: this.getData })
+      React.createElement('a', { id: 'carousel-left', className: 'left carousel-control', href: '#carousel-example-generic', role: 'button', 'data-slide': 'prev', onClick: this.getData }),
+      React.createElement('a', { id: 'carousel-right', className: 'right carousel-control', href: '#carousel-example-generic', role: 'button', 'data-slide': 'next', onClick: this.getData })
     );
   }
 });
