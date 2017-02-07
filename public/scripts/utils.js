@@ -20,7 +20,7 @@ var isEmpty = function(text){
 }
 
 var isUndefined = function(obj){
-  if(obj === undefined){
+  if(obj === undefined || obj===null){
     return true;
   }
   return false;

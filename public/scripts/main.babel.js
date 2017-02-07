@@ -42,17 +42,20 @@ var NavBox = React.createClass({
           var _searchText = _this.val();
           if (_searchText != getURLRequestSearchText()) localStorage.setItem("tfRefreshSearch", true);else localStorage.setItem("tfRefreshSearch", false);
 
-          //localStorage.setItem("tfSearchText", _searchText);
-          // redirect
-          var winLocation = window.location.origin;
-          window.location.replace(winLocation + "/" + _searchText);
-
-          // main.props.callbackParent(_this.val());
-          // _this.blur();
-          // var btnNavBarToggle = $("#navbar-toggle");
-          // if(btnNavBarToggle.attr("class").indexOf("collapsed")==-1){
-          //   btnNavBarToggle.click(); //toggle navbar-toggle
-          // }
+          if (!isUndefined(history)) {
+            // html5 pushState without forcing a refresh
+            history.pushState(null, null, _searchText);
+            main.props.callbackParent(_this.val());
+            _this.blur();
+            var btnNavBarToggle = $("#navbar-toggle");
+            if (btnNavBarToggle.attr("class").indexOf("collapsed") == -1) {
+              btnNavBarToggle.click(); //toggle navbar-toggle
+            }
+          } else {
+            // not html5. Forcing a refresh
+            var winLocation = window.location.origin;
+            window.location.replace(winLocation + "/" + _searchText);
+          }
         }
       });
 
@@ -304,7 +307,7 @@ var NewsBox = React.createClass({
   },
   updateMetaData: function updateMetaData() {
     //open graph
-    $('meta[property="og:type"]').attr("content", "article");
+    $("meta[property='og:type']").attr("content", "article");
     $('meta[property="og:site_name"]').attr("content", this.state.currentData.newsSrc);
     $('meta[property="og:title"]').attr("content", "TAGfeeds: " + this.state.currentData.title);
     $('meta[property="og:image"]').attr("content", this.state.currentData.image);
@@ -329,7 +332,7 @@ var NewsBox = React.createClass({
         }
       });
     });
-    this.updateMetaData();
+    _this.updateMetaData();
   },
   componentDidUpdate: function componentDidUpdate() {
     this.updateMetaData();
