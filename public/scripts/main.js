@@ -41,7 +41,10 @@ var NavBox = React.createClass({
 
             if(!isUndefined(history)){
               // html5 pushState without forcing a refresh
+              _searchText = (isEmpty(_searchText))? "/": _searchText;
               history.pushState(null,null,_searchText);
+              updateSearchStorage();
+
               main.props.callbackParent(_this.val());
               _this.blur();
               var btnNavBarToggle = $("#navbar-toggle");
