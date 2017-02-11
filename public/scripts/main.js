@@ -90,7 +90,7 @@ var NavBox = React.createClass({
         <div className="container-fluid">
           <div className="navbar-header">
             <a className="navbar-brand" href="#">
-              <img src="images/brandTf.png" />
+              <img src={frontendURL+"/images/brandTf.png"} />
             </a>
             <button id="navbar-toggle" type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
               <span className="sr-only">Toggle navigation</span>
@@ -244,7 +244,7 @@ var MainBox = React.createClass({
                   };
 
                   return(<div className={carouselInnerDivClassName} key={parentDivId}>
-                    <img src="images/spacer.png" height="100%" width="100%" key={imageId}/>
+                    <img src={frontendURL+"/images/spacer.png"} height="100%" width="100%" key={imageId}/>
                     <div key={divId}>
                       <div id="newsBg" style={newsBgStyle} key={newsBgId}/>
                       <div id="blackOverlay" key={blackOverlayId}/>
@@ -318,7 +318,7 @@ var NewsBox = React.createClass({
             <tr>
               <td></td>
               <td id="logoRow">
-                <img src="images/logoTfMed.png"/>
+                <img src={frontendURL+"/images/logoTfMed.png"}/>
               </td>
               <td></td>
             </tr>
@@ -344,7 +344,7 @@ var NewsBox = React.createClass({
                     </span>
                   </article>
                   <br/>
-                  <span id="apiProvider"><img src="images/brandBing.png"/></span>
+                  <span id="apiProvider"><img src={frontendURL+"/images/brandBing.png"}/></span>
                 </div>
               </td>
               <td>

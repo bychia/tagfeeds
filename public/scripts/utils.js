@@ -115,7 +115,7 @@ var infoMsg_LocalStorage = function(){
   }
 }
 
-
+var frontendURL = "http://tagfeeds.com";
 var localStorage = window.localStorage;
 var backendURL = "http://api.tagfeeds.com/newsBing";
 var keyId = 0;
