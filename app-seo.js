@@ -28,6 +28,7 @@ var getDocType = function(url){
 
 var renderHtml = function(url, cb) {
     var page = require('webpage').create();
+    page.settings.resourceTimeout = 3000;
     page.onCallback = function() {
       cb(page.content);
       page.close();
@@ -36,7 +37,7 @@ var renderHtml = function(url, cb) {
           page.evaluate(function() {
                setTimeout(function() {
                    window.callPhantom();
-               }, 1000);
+               }, 2000);
            });
 
     };
@@ -48,8 +49,11 @@ var renderHtml = function(url, cb) {
 
 server.listen(port, function (request, response) {
     //http://localhost:3000/clinton?_escaped_fragment_=
-    var route = parse_qs(request.url)._escaped_fragment_;
-    var url = urlPrefix + request.url;
+    //var route = parse_qs(request.url)._escaped_fragment_;
+    var url = urlPrefix + request.url + "?_escaped_fragment_=";
+    // console.log(route);
+    // console.log(urlPrefix);
+    // console.log(request.url);
     renderHtml(url, function(html) {
         response.statusCode = 200;
         response.write(html);
