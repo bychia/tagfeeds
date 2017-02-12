@@ -1,13 +1,12 @@
-var system = require('system');
-
-if (system.args.length < 3) {
-    console.log("Missing arguments.");
-    phantom.exit();
-}
+//var system = require('system');
+// if (system.args.length < 3) {
+//     console.log("Missing arguments.");
+//     phantom.exit();
+// }
 
 var server = require('webserver').create();
-var port = parseInt(system.args[1]);
-var urlPrefix = system.args[2];
+var port = "3030"; //parseInt(system.args[1]);
+var urlPrefix = "http://localhost:3000";//system.args[2];
 
 var parse_qs = function(s) {
     var queryString = {};
@@ -33,9 +32,6 @@ var renderHtml = function(url, cb) {
       cb(page.content);
       page.close();
     };
-    page.onConsoleMessage = function(msg, lineNum, sourceId) {
-       console.log('CONSOLE: ' + msg + ' (from line #' + lineNum + ' in "' + sourceId + '")');
-    };
     page.onInitialized = function() {
           page.evaluate(function() {
                setTimeout(function() {
@@ -54,7 +50,6 @@ server.listen(port, function (request, response) {
     //http://localhost:3000/clinton?_escaped_fragment_=
     var route = parse_qs(request.url)._escaped_fragment_;
     var url = urlPrefix + request.url;
-    console.log("url:"+url);
     renderHtml(url, function(html) {
         response.statusCode = 200;
         response.write(html);
@@ -65,3 +60,4 @@ server.listen(port, function (request, response) {
 // console.log('Listening on ' + port + '...');
 // console.log('Press Ctrl+C to stop.');
 // phantomjs app-seo.js 3030 http://127.0.0.1:3000
+// pm2 start app-seo.js --interpreter=phantomjs
