@@ -278,7 +278,7 @@ var NewsBox = React.createClass({
     $('meta[property="og:site_name"]').attr("content",this.state.currentData.newsSrc);
     $('meta[property="og:title"]').attr("content","TAGfeeds: "+this.state.currentData.title);
     $('meta[property="og:image"]').attr("content",this.state.currentData.image);
-    $('meta[property="og:url"]').attr("content",frontendURL()+"/"+getSessionSearchText());
+    $('meta[property="og:url"]').attr("content",frontendURL+"/"+getSessionSearchText());
     $('meta[property="og:description"]').attr("content",this.state.currentData.description);
     //twitter cards
     $('meta[name="twitter:title"]').attr("content","TAGfeeds: "+this.state.currentData.title);
