@@ -99,7 +99,7 @@ var NavBox = React.createClass({
           React.createElement(
             'a',
             { className: 'navbar-brand', href: '#' },
-            React.createElement('img', { src: frontendURL + "/images/brandTf.png" })
+            React.createElement('img', { src: assetURL + "/images/brandTf.png" })
           ),
           React.createElement(
             'button',
@@ -278,7 +278,7 @@ var MainBox = React.createClass({
               return React.createElement(
                 'div',
                 { className: carouselInnerDivClassName, key: parentDivId },
-                React.createElement('img', { src: frontendURL + "/images/spacer.png", height: '100%', width: '100%', key: imageId }),
+                React.createElement('img', { src: assetURL + "/images/spacer.png", height: '100%', width: '100%', key: imageId }),
                 React.createElement(
                   'div',
                   { key: divId },
@@ -367,7 +367,7 @@ var NewsBox = React.createClass({
               React.createElement(
                 'td',
                 { id: 'logoRow' },
-                React.createElement('img', { src: frontendURL + "/images/logoTfMed.png" })
+                React.createElement('img', { src: assetURL + "/images/logoTfMed.png" })
               ),
               React.createElement('td', null)
             ),
@@ -423,7 +423,7 @@ var NewsBox = React.createClass({
                   React.createElement(
                     'span',
                     { id: 'apiProvider' },
-                    React.createElement('img', { src: frontendURL + "/images/brandBing.png" })
+                    React.createElement('img', { src: assetURL + "/images/brandBing.png" })
                   )
                 )
               ),

@@ -64,3 +64,4 @@ server.listen(port, function (request, response) {
 //
 // console.log('Listening on ' + port + '...');
 // console.log('Press Ctrl+C to stop.');
+// phantomjs app-seo.js 3030 http://127.0.0.1:3000
