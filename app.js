@@ -2,7 +2,6 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -20,9 +19,6 @@ app.get('/:searchText', function(req, res){
 });
 
 app.get('*', function(req, res){
-    // var totalLevel = req.path.split("/").length - 1;
-    // var strTotalLevel = Array(totalLevel).join( "../" );
-    // res.redirect(strTotalLevel+'index.html');
     res.status('404').send("<h3>Invalid News</h3><p>We can't find news based on your search.</p>");
     return;
 });
