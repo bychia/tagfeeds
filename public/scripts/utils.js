@@ -117,6 +117,7 @@ var infoMsg_LocalStorage = function(){
 
 var assetURL = "http://asset.tagfeeds.com";
 var localStorage = window.localStorage;
+var frontendURL = "http://www.tagfeeds.com";
 var backendURL = "http://api.tagfeeds.com/newsBing";
 var keyId = 0;
 updateSearchStorage();
