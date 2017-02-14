@@ -309,19 +309,24 @@ var NewsBox = React.createClass({
     return { index: 0, currentData: this.props.data[0] };
   },
   updateMetaData: function updateMetaData() {
+    //link
     $("link[rel='image_src']").attr("href", this.state.currentData.image);
+    $("link[rel='canonical']").attr("href", frontendURL + "/" + getSessionSearchText());
     $("meta[name='description']").attr("content", this.state.currentData.description);
+    $('meta[itemprop="description"]').attr("content", this.state.currentData.description);
+    $('meta[itemprop="image"]').attr("content", this.state.currentData.image);
     //open graph
     $("meta[property='og:type']").attr("content", "article");
     $('meta[property="og:site_name"]').attr("content", "#TAGfeeds");
     $('meta[property="og:title"]').attr("content", "#TAGfeeds: " + this.state.currentData.title);
-    $('meta[property="og:image"]').attr("content", this.state.currentData.image);
     $('meta[property="og:url"]').attr("content", frontendURL + "/" + getSessionSearchText());
+    $('meta[property="og:image"]').attr("content", this.state.currentData.image);
     $('meta[property="og:description"]').attr("content", this.state.currentData.description);
     //twitter cards
     $('meta[name="twitter:title"]').attr("content", "#TAGfeeds: " + this.state.currentData.title);
     $('meta[name="twitter:description"]').attr("content", this.state.currentData.description);
     $('meta[name="twitter:image"]').attr("content", this.state.currentData.image);
+    $('meta[name="twitter:image:src"]').attr("content", this.state.currentData.image);
   },
   componentDidMount: function componentDidMount() {
     var _this = this;
