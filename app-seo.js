@@ -28,7 +28,7 @@ var getDocType = function(url){
 
 var renderHtml = function(url, cb) {
     var page = require('webpage').create();
-    page.settings.resourceTimeout = 2000;
+    page.settings.resourceTimeout = 5000;
     page.onCallback = function() {
       cb(page.content);
       page.close();
