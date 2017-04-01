@@ -1,3 +1,7 @@
+import sys
+reload(sys)
+sys.setdefaultencoding('UTF8')
+
 import os
 from os.path import splitext
 import requests
@@ -6,8 +10,11 @@ from flask import Flask, Response, request
 import re
 try:
     from urlparse import urljoin  # Python2
+    from urlparse import urlparse
 except ImportError:
     from urllib.parse import urljoin  # Python3
+    from urllib.parse import urlparse
+
 
 
 app = Flask(__name__)
@@ -38,13 +45,15 @@ def html_decode(s):
 
 lookupTagnames = {
     "a": "href",
-    "img": ["src","data-deskscr"],
+    "img": ["src","data-deskscr","data-thumb"],
     "link": "href",
     "script": "src"
 }
 
 def replaceContent(htmlContent, absoluteURL):
     content = BeautifulSoup(htmlContent)
+    parsed_uri = urlparse(absoluteURL)
+    baseURL = cleanUrl('{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri))
 
     def replaceSrc(content, key, value):
         findTags = content.findAll(key)
@@ -54,13 +63,13 @@ def replaceContent(htmlContent, absoluteURL):
                 if tagValue.find("http")==0 or tagValue.find("#")==0:
                     continue #skip
                 elif tagValue.find("//")==-1 and tagValue.find("/")==0:
-                    eachTag[value] = absoluteURL + tagValue
+                    eachTag[value] = baseURL + tagValue
                 elif tagValue.find("//")==-1 and tagValue.find("./")==0:
                     eachTag[value] = absoluteURL + tagValue[1:]
                 elif tagValue.find("//")==-1 and tagValue.find("..")==0:
                     eachTag[value] = urljoin(absoluteURL, tagValue)
                 elif tagValue.find("//")==-1 and len(re.findall("^[A-Za-z0-9]+",tagValue))>0:
-                        eachTag[value] = absoluteURL + tagValue
+                        eachTag[value] = absoluteURL + "/" + tagValue
 
     #Search through all tagNames
     for key, value in lookupTagnames.iteritems():
@@ -73,15 +82,24 @@ def replaceContent(htmlContent, absoluteURL):
     #Search through cases with url path in style element
     content = re.sub("url\(\'\/", "url(\'"+ absoluteURL + "/", str(content))
     content = re.sub("url\(\/", "url("+ absoluteURL + "/", content)
+
     return content
 
 
-def getContent(url):
+# Get Web content of the required url
+def getWebContent(url):
     try:
         req = requests.get(url)
-        return req.text.encode('utf-8')
+        return req.content.decode('utf-8')
     except:
         return ""
+
+
+# clean the url
+def cleanUrl(url):
+    if url[-1]=="/":
+        url = url[:-1]
+    return url
 
 
 #Endpoints
@@ -91,7 +109,8 @@ def curl_handler():
     htmlContent = ""
     try:
         url = request.args.get('url')
-        htmlContent = getContent(url)
+        url = cleanUrl(url)
+        htmlContent = getWebContent(url)
         htmlContent = replaceContent(htmlContent, url)
     except:
         pass
