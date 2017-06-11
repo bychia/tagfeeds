@@ -13,6 +13,7 @@ import urlparse
 LOG_FILENAME = '/var/log/api.tagfeeds.com.log'
 STR_URL = 'http://www.bing.com/news?format=RSS'
 STR_PICSIZE ="&w=1500&h=1000&c=7&rs=2"
+THUMBNAIL_PICSIZE = "&w=300&h=200&c=7&rs=2.jpg"
 
 app = Flask(__name__)
 # cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -37,6 +38,7 @@ def parseUrl(url):
 def formatData(item):
     DEFAULT_IMAGEURL = "http://asset.tagfeeds.com/images/newsTfMed.png"
     imageUrl = DEFAULT_IMAGEURL if len(item.getElementsByTagName("News:Image"))==0 else item.getElementsByTagName("News:Image")[0].firstChild.nodeValue+STR_PICSIZE
+    thumbnailUrl = DEFAULT_IMAGEURL if len(item.getElementsByTagName("News:Image"))==0 else item.getElementsByTagName("News:Image")[0].firstChild.nodeValue+THUMBNAIL_PICSIZE
     title = "" if len(item.getElementsByTagName("title"))==0 else item.getElementsByTagName("title")[0].firstChild.nodeValue
     link = "" if len(item.getElementsByTagName("link"))==0 else item.getElementsByTagName("link")[0].firstChild.nodeValue
     description = "" if len(item.getElementsByTagName("description"))==0 else item.getElementsByTagName("description")[0].firstChild.nodeValue
@@ -48,6 +50,7 @@ def formatData(item):
         "description": description,
         "pubDate": pubDate,
         "image": imageUrl,
+        "thumbnail": thumbnailUrl,
         "newsSrc": newsSrc
     }
 
