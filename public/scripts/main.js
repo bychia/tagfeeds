@@ -280,12 +280,13 @@ var NewsBox = React.createClass({
     //open graph
     $("meta[property='og:type']").attr("content","article");
     $('meta[property="og:site_name"]').attr("content","#TAGfeeds");
-    $('meta[property="og:title"]').attr("content","#TAGfeeds: "+this.state.currentData.title);
+    // $('meta[property="og:title"]').attr("content","#TAGfeeds: "+this.state.currentData.title);
     $('meta[property="og:url"]').attr("content",frontendURL+"/"+getSessionSearchText());
     $('meta[property="og:image"]').attr("content",this.state.currentData.image);
     $('meta[itemprop="image"]').attr("content",this.state.currentData.image);
-    $('meta[property="og:description"]').attr("content",this.state.currentData.description);
-    $('meta[itemprop="description"]').attr("content",this.state.currentData.description);
+    // $('meta[property="og:description"]').attr("content",this.state.currentData.description);
+    $('meta[property="og:updated_time"]').attr("content",this.state.currentData.pubDate);
+    // $('meta[itemprop="description"]').attr("content",this.state.currentData.description);
     //twitter cards
     $('meta[name="twitter:title"]').attr("content", "#TAGfeeds: " + this.state.currentData.title);
     $('meta[name="twitter:description"]').attr("content", this.state.currentData.description);
