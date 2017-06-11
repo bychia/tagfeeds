@@ -37,7 +37,7 @@ def parseUrl(url):
 
 def formatData(item):
     DEFAULT_IMAGEURL = "http://asset.tagfeeds.com/images/newsTfMed.png"
-    imageUrl = DEFAULT_IMAGEURL if len(item.getElementsByTagName("News:Image"))==0 else item.getElementsByTagName("News:Image")[0].firstChild.nodeValue+STR_PICSIZE
+    imageUrl = "" if len(item.getElementsByTagName("News:Image"))==0 else item.getElementsByTagName("News:Image")[0].firstChild.nodeValue+STR_PICSIZE
     thumbnailUrl = DEFAULT_IMAGEURL if len(item.getElementsByTagName("News:Image"))==0 else item.getElementsByTagName("News:Image")[0].firstChild.nodeValue+THUMBNAIL_PICSIZE
     title = "" if len(item.getElementsByTagName("title"))==0 else item.getElementsByTagName("title")[0].firstChild.nodeValue
     link = "" if len(item.getElementsByTagName("link"))==0 else item.getElementsByTagName("link")[0].firstChild.nodeValue
