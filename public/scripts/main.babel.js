@@ -314,15 +314,15 @@ var NewsBox = React.createClass({
     $("link[rel='canonical']").attr("href", frontendURL + "/" + getSessionSearchText());
     $("meta[name='description']").attr("content", this.state.currentData.description);
     //open graph
-    $("meta[property='og:type']").attr("content", "article");
+    $("meta[property='og:type']").attr("content", "website");
     $('meta[property="og:site_name"]').attr("content", "#TAGfeeds");
     $('meta[property="og:title"]').attr("content", "#TAGfeeds: " + this.state.currentData.title);
     $('meta[property="og:url"]').attr("content", frontendURL + "/" + getSessionSearchText());
     $('meta[property="og:image"]').attr("content", this.state.currentData.thumbnail);
-    $('meta[itemprop="image"]').attr("content", this.state.currentData.thumbnail);
     $('meta[property="og:description"]').attr("content", this.state.currentData.description);
     $('meta[property="og:updated_time"]').attr("content", this.state.currentData.pubDate);
-    $('meta[itemprop="description"]').attr("content", this.state.currentData.description);
+    $('meta[imageprop="image"]')[0].content = this.state.currentData.thumbnail;
+    $('meta[itemprop="description"]')[0].content = this.state.currentData.description;
     //twitter cards
     $('meta[name="twitter:title"]').attr("content", "#TAGfeeds: " + this.state.currentData.title);
     $('meta[name="twitter:description"]').attr("content", this.state.currentData.description);
