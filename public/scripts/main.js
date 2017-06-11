@@ -273,6 +273,7 @@ var NewsBox = React.createClass({
     return {index:0, currentData:this.props.data[0]};
   },
   updateMetaData: function(){
+    $("title").html(this.state.currentData.title);
     //link
     $("link[rel='image_src']").attr("href",this.state.currentData.thumbnail);
     $("link[rel='canonical']").attr("href",frontendURL+"/"+getSessionSearchText());
