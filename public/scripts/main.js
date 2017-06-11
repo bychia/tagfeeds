@@ -276,7 +276,7 @@ var NewsBox = React.createClass({
     //link
     $("link[rel='image_src']").attr("href",this.state.currentData.image);
     $("link[rel='canonical']").attr("href",frontendURL+"/"+getSessionSearchText());
-    $("meta[name='description']").attr("content",this.state.currentData.description);
+    // $("meta[name='description']").attr("content",this.state.currentData.description);
     //open graph
     $("meta[property='og:type']").attr("content","article");
     $('meta[property="og:site_name"]').attr("content","#TAGfeeds");
