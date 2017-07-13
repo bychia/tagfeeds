@@ -1,2 +1,2 @@
 # tagfeeds
-tagfeeds.com
+tagfeeds
