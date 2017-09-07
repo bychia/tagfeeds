@@ -55,9 +55,15 @@ var renderHtml = function(url, cb) {
 
 server.listen(port, function (request, response) {
     var searchPath = "public" + request.url;
-    console.log(searchPath);
-    if (!fs.exists(searchPath)){
-        console.log("renderHTMLNotFound");
+    if (fs.exists(searchPath) && !fs.isDirectory(searchPath)){
+        //console.log("renderHTMLFound");
+        var content = fs.read(searchPath);
+        response.statusCode = 200;
+        response.write(content);
+        response.close();
+
+    }else{
+        //console.log("renderHTMLNotFound");
         //http://localhost:3000/clinton?_escaped_fragment_=
         //var route = parse_qs(request.url)._escaped_fragment_;
         var url = urlPrefix + request.url + "?_escaped_fragment_=";
@@ -69,11 +75,6 @@ server.listen(port, function (request, response) {
             response.write(html);
             response.close();
         });
-    }else{
-        //console.log("renderHTMLFound");
-        var content = fs.read(searchPath);
-        response.statusCode = 200;
-        response.write(content);
     }
 
 });
