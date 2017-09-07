@@ -5,6 +5,7 @@
 // }
 
 var server = require('webserver').create();
+var fs = require('fs');
 var port = "3030"; //parseInt(system.args[1]);
 var urlPrefix = "http://localhost:3000";//system.args[2];
 
@@ -30,16 +31,21 @@ var renderHtml = function(url, cb) {
     var page = require('webpage').create();
     page.settings.resourceTimeout = 5000;
     page.onCallback = function() {
+//      console.log("callback!!!");
       cb(page.content);
       page.close();
     };
     page.onInitialized = function() {
-          page.evaluate(function() {
-               setTimeout(function() {
-                   window.callPhantom();
-               }, 1000);
-           });
-
+//      console.log("page initialised");
+      page.evaluate(function() {
+           setTimeout(function() {
+               window.callPhantom();
+           }, 1000);
+       });
+    };
+    page.onLoadFinished = function(){
+       var path = 'public/'+encodeURIComponent(page.title);
+       fs.write(path, page.content, 'w');
     };
     if(getDocType(url)!="js"){
       page.open(url);
@@ -48,17 +54,28 @@ var renderHtml = function(url, cb) {
 };
 
 server.listen(port, function (request, response) {
-    //http://localhost:3000/clinton?_escaped_fragment_=
-    //var route = parse_qs(request.url)._escaped_fragment_;
-    var url = urlPrefix + request.url + "?_escaped_fragment_=";
-    // console.log(route);
-    // console.log(urlPrefix);
-    // console.log(request.url);
-    renderHtml(url, function(html) {
+    var searchPath = "public" + request.url;
+    console.log(searchPath);
+    if (!fs.exists(searchPath)){
+        console.log("renderHTMLNotFound");
+        //http://localhost:3000/clinton?_escaped_fragment_=
+        //var route = parse_qs(request.url)._escaped_fragment_;
+        var url = urlPrefix + request.url + "?_escaped_fragment_=";
+        // console.log(route);
+        // console.log(urlPrefix);
+        // console.log(request.url);
+        renderHtml(url, function(html) {
+            response.statusCode = 200;
+            response.write(html);
+            response.close();
+        });
+    }else{
+        //console.log("renderHTMLFound");
+        var content = fs.read(searchPath);
         response.statusCode = 200;
-        response.write(html);
-        response.close();
-    });
+        response.write(content);
+    }
+
 });
 //
 // console.log('Listening on ' + port + '...');
