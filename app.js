@@ -1,5 +1,7 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
+const phantom = require('phantomjs');
 const app = express();
 
 app.use(function(req, res, next) {
@@ -15,12 +17,19 @@ app.get('/', function(req, res){
 });
 
 app.get('/:searchText', function(req, res){
-    res.sendFile(path.join(__dirname, './public', 'index.html'));
+    var searchPath = path.join(__dirname, './public', req.url);
+    var searchFile = searchPath+".html";
+    if(fs.existsSync(searchFile)){
+        res.sendFile(searchFile);
+    }else{
+        res.sendFile(path.join(__dirname, './public', 'index.html'));
+    }
 });
 
 app.get('*', function(req, res){
     res.status('404').send("<h3>Invalid News</h3><p>We can't find news based on your search.</p>");
     return;
 });
+
 
 app.listen(3000);
