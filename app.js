@@ -1,8 +1,10 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const phantom = require('phantomjs');
+const request = require('request');
 const app = express();
+
+const phantomHost = "http://localhost:3030";
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -22,7 +24,13 @@ app.get('/:searchText', function(req, res){
     if(fs.existsSync(searchFile)){
         res.sendFile(searchFile);
     }else{
-        res.sendFile(path.join(__dirname, './public', 'index.html'));
+//        res.sendFile(path.join(__dirname, './public', 'index.html'));
+//        console.log(phantomHost+req.url+"\n");
+        request(phantomHost+req.url, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                res.send(body);
+            }
+        });
     }
 });
 
