@@ -38,7 +38,7 @@ var renderHtml = function(url, reqPage, cb) {
       page.evaluate(function() {
            setTimeout(function() {
                window.callPhantom();
-           }, 1000);
+           }, 5000);
        });
     };
     page.onLoadFinished = function(){
