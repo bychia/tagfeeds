@@ -38,14 +38,15 @@ var renderHtml = function(url, reqPage, cb) {
       page.evaluate(function() {
            setTimeout(function() {
                window.callPhantom();
-           }, 5000);
+           }, 3000);
        });
     };
     page.onLoadFinished = function(){
        //console.log("working directory:" + fs.workingDirectory);
        var path = 'public/' + (encodeURIComponent(reqPage)+".html");
-       var pageContent = page.content.replace('<script type="text/javascript" src="http://asset.tagfeeds.com/scripts/utils.min.js"></script>',"");
-       pageContent = pageContent.replace('<script type="text/javascript" src="http://asset.tagfeeds.com/scripts/main.babel.min.js"></script>',"");
+       var pageContent = page.content;
+       //var pageContent = page.content.replace('<script type="text/javascript" src="http://asset.tagfeeds.com/scripts/utils.min.js"></script>',"");
+       //pageContent = pageContent.replace('<script type="text/javascript" src="http://asset.tagfeeds.com/scripts/main.babel.min.js"></script>',"");
        if (fs.exists(fs.workingDirectory + "/" + path)){
            //console.log("file remove: "+ path);
            fs.remove(path);
@@ -58,7 +59,8 @@ var renderHtml = function(url, reqPage, cb) {
        file.close();
 
     };
-    if(getDocType(url)!="js" && getDocType(url)!='ico'){
+    var docType = getDocType(url);
+    if(docType!="js" && docType!='ico' && docType!='png' && docType!='xml' && docType!='css'){
       page.open(url);
     }
 

@@ -24,13 +24,13 @@ app.get('/:searchText', function(req, res){
     if(fs.existsSync(searchFile)){
         res.sendFile(searchFile);
     }else{
-//        res.sendFile(path.join(__dirname, './public', 'index.html'));
+        res.sendFile(path.join(__dirname, './public', 'index.html'));
 //        console.log(phantomHost+req.url+"\n");
-        request(phantomHost+req.url, function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                res.send(body);
-            }
-        });
+//        request(phantomHost+req.url, function (error, response, body) {
+//            if (!error && response.statusCode == 200) {
+//                res.send(body);
+//            }
+//        });
     }
 });
 
