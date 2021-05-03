@@ -38,7 +38,7 @@ var renderHtml = function(url, reqPage, cb) {
       page.evaluate(function() {
            setTimeout(function() {
                window.callPhantom();
-           }, 3000);
+           }, 1000);
        });
     };
     page.onLoadFinished = function(){
@@ -67,15 +67,15 @@ var renderHtml = function(url, reqPage, cb) {
 };
 
 server.listen(port, function (request, response) {
-//    var searchPath = "public" + request.url;
-//    if (fs.exists(searchPath) && !fs.isDirectory(searchPath)){
-//        //console.log("renderHTMLFound");
-//        var content = fs.read(searchPath);
-//        response.statusCode = 200;
-//        response.write(content);
-//        response.close();
-//
-//    }else{
+    var searchPath = "public" + request.url;
+    if (fs.exists(searchPath) && !fs.isDirectory(searchPath)){
+        //console.log("renderHTMLFound");
+        var content = fs.read(searchPath);
+        response.statusCode = 200;
+        response.write(content);
+        response.close();
+
+    }else{
         //console.log("renderHTMLNotFound");
         //http://localhost:3000/clinton?_escaped_fragment_=
         //var route = parse_qs(request.url)._escaped_fragment_;
@@ -88,7 +88,7 @@ server.listen(port, function (request, response) {
             response.write(html);
             response.close();
         });
-//    }
+    }
 
 });
 //
