@@ -1,48 +1,58 @@
-'use strict';
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+"use strict";
 
 var NavBox = React.createClass({
-  displayName: 'NavBox',
-
-  getData: function getData() {
+  displayName: "NavBox",
+  getData: function () {
     var sessionSearchText = getSessionSearchText();
-    var tagList = sessionSearchText == undefined ? [undefined] : sessionSearchText.split(',');
+    var tagList =
+      sessionSearchText == undefined
+        ? [undefined]
+        : sessionSearchText.split(",");
     var tagListObj = [];
     var id = 0;
     tagList.forEach(function (text) {
-      tagListObj[id++] = { "search": text };
+      tagListObj[id++] = {
+        search: text
+      };
     });
-    this.setState({ tagList: tagListObj });
+    this.setState({
+      tagList: tagListObj
+    });
   },
-  removeTag: function removeTag(text) {
+  removeTag: function (text) {
     var tagListObj = this.state.tagList;
+
     for (var i = 0; i < tagListObj.length; i++) {
       var tag = tagListObj[i];
+
       if (tag.search === encodeURI(text)) {
         tagListObj.splice(i, 1);
       }
     }
-    this.setState({ tagList: tagListObj });
+
+    this.setState({
+      tagList: tagListObj
+    });
   },
-  componentDidMount: function componentDidMount() {
+  componentDidMount: function () {
     var main = this;
     main.getData();
-
     $(function () {
-      $('#searchForm').submit(function () {
+      $("#searchForm").submit(function () {
         return false;
-      });
-      // Implement the form post behavior
-      $('#searchInput').keypress(function (e) {
+      }); // Implement the form post behavior
+
+      $("#searchInput").keypress(function (e) {
         // keyId++;
         var _this = $(this);
+
         if (e.keyCode == 13) {
           // update the localStorage
           var _searchText = _this.val();
-          if (_searchText != getURLRequestSearchText()) localStorage.setItem("tfRefreshSearch", true);else localStorage.setItem("tfRefreshSearch", false);
 
-          // if(!isUndefined(history)){
+          if (_searchText != getURLRequestSearchText())
+            localStorage.setItem("tfRefreshSearch", true);
+          else localStorage.setItem("tfRefreshSearch", false); // if(!isUndefined(history)){
           //   // html5 pushState without forcing a refresh
           //   _searchText = (isEmpty(_searchText))? "/": _searchText;
           //   history.pushState(null,null,_searchText);
@@ -56,94 +66,162 @@ var NavBox = React.createClass({
           //   }
           // }else{
           // not html5. Forcing a refresh
+
           var winLocation = window.location.origin;
-          window.location.replace(winLocation + "/" + _searchText);
-          // }
+          window.location.replace(winLocation + "/" + _searchText); // }
         }
+      }); //trick to remove zoom in on mobile phone
+
+      $("#searchInput").mousedown(function () {
+        $("meta[name=viewport]").remove();
+        $("head").append(
+          '<meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=0">'
+        );
       });
-
-      //trick to remove zoom in on mobile phone
-      $('#searchInput').mousedown(function () {
-        $('meta[name=viewport]').remove();
-        $('head').append('<meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=0">');
+      $("#searchInput").focusout(function () {
+        $("meta[name=viewport]").remove();
+        $("head").append(
+          '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
+        );
       });
-
-      $('#searchInput').focusout(function () {
-        $('meta[name=viewport]').remove();
-        $('head').append('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
-      });
-
-      $('.has-clear input[type="text"]').on('input propertychange', function () {
-        var $this = $(this);
-        var visible = Boolean($this.val());
-        $this.siblings('.form-control-clear').toggleClass('hidden', !visible);
-      }).trigger('propertychange');
-
-      $('.form-control-clear').click(function () {
-        $('#searchInput').mousedown();
-        $(this).siblings('input[type="text"]').val('').trigger('propertychange').focus();
+      $('.has-clear input[type="text"]')
+        .on("input propertychange", function () {
+          var $this = $(this);
+          var visible = Boolean($this.val());
+          $this.siblings(".form-control-clear").toggleClass("hidden", !visible);
+        })
+        .trigger("propertychange");
+      $(".form-control-clear").click(function () {
+        $("#searchInput").mousedown();
+        $(this)
+          .siblings('input[type="text"]')
+          .val("")
+          .trigger("propertychange")
+          .focus();
       });
     });
   },
-
-  render: function render() {
-    return React.createElement(
-      'nav',
-      { className: 'navbar navbar-inverse navbar-fixed-top' },
-      React.createElement(
-        'div',
-        { className: 'container-fluid' },
-        React.createElement(
-          'div',
-          { className: 'navbar-header' },
-          React.createElement(
-            'a',
-            { className: 'navbar-brand', href: '#' },
-            React.createElement('img', { src: assetURL + "/images/brandTf.png" })
+  render: function () {
+    return /*#__PURE__*/ React.createElement(
+      "nav",
+      {
+        className: "navbar navbar-inverse navbar-fixed-top"
+      },
+      /*#__PURE__*/ React.createElement(
+        "div",
+        {
+          className: "container-fluid"
+        },
+        /*#__PURE__*/ React.createElement(
+          "div",
+          {
+            className: "navbar-header"
+          },
+          /*#__PURE__*/ React.createElement(
+            "a",
+            {
+              className: "navbar-brand",
+              href: "#"
+            },
+            /*#__PURE__*/ React.createElement("img", {
+              src: assetURL + "/images/brandTf.png"
+            })
           ),
-          React.createElement(
-            'button',
-            { id: 'navbar-toggle', type: 'button', className: 'navbar-toggle collapsed', 'data-toggle': 'collapse', 'data-target': '#navbar', 'aria-expanded': 'false', 'aria-controls': 'navbar' },
-            React.createElement(
-              'span',
-              { className: 'sr-only' },
-              'Toggle navigation'
+          /*#__PURE__*/ React.createElement(
+            "button",
+            {
+              id: "navbar-toggle",
+              type: "button",
+              className: "navbar-toggle collapsed",
+              "data-toggle": "collapse",
+              "data-target": "#navbar",
+              "aria-expanded": "false",
+              "aria-controls": "navbar"
+            },
+            /*#__PURE__*/ React.createElement(
+              "span",
+              {
+                className: "sr-only"
+              },
+              "Toggle navigation"
             ),
-            React.createElement('span', { className: 'icon-bar' }),
-            React.createElement('span', { className: 'icon-bar' }),
-            React.createElement('span', { className: 'icon-bar' })
+            /*#__PURE__*/ React.createElement("span", {
+              className: "icon-bar"
+            }),
+            /*#__PURE__*/ React.createElement("span", {
+              className: "icon-bar"
+            }),
+            /*#__PURE__*/ React.createElement("span", {
+              className: "icon-bar"
+            })
           )
         ),
-        React.createElement(
-          'div',
-          { id: 'navbar', className: 'navbar-collapse collapse', 'aria-expanded': 'false' },
-          React.createElement(
-            'ul',
-            { className: 'nav navbar-nav navbar-left' },
-            React.createElement(
-              'form',
-              { id: 'searchForm', className: 'navbar-form navbar-left has-feedback has-clear', role: 'form', action: '.' },
-              React.createElement(
-                'div',
-                { className: 'form-group' },
-                React.createElement('input', { id: 'searchInput', type: 'text', name: 'search', className: 'form-control', placeholder: 'Search' }),
-                React.createElement('span', { className: 'form-control-clear glyphicon glyphicon-remove-circle form-control-feedback translucent' })
+        /*#__PURE__*/ React.createElement(
+          "div",
+          {
+            id: "navbar",
+            className: "navbar-collapse collapse",
+            "aria-expanded": "false"
+          },
+          /*#__PURE__*/ React.createElement(
+            "ul",
+            {
+              className: "nav navbar-nav navbar-left"
+            },
+            /*#__PURE__*/ React.createElement(
+              "form",
+              {
+                id: "searchForm",
+                className: "navbar-form navbar-left has-feedback has-clear",
+                role: "form",
+                action: "."
+              },
+              /*#__PURE__*/ React.createElement(
+                "div",
+                {
+                  className: "form-group"
+                },
+                /*#__PURE__*/ React.createElement("input", {
+                  id: "searchInput",
+                  type: "text",
+                  name: "search",
+                  className: "form-control",
+                  placeholder: "Search"
+                }),
+                /*#__PURE__*/ React.createElement("span", {
+                  className:
+                    "form-control-clear glyphicon glyphicon-remove-circle form-control-feedback translucent"
+                })
               ),
-              React.createElement(
-                'div',
-                { className: 'bootstrap-tagsinput', id: 'tagCollection' },
-                this.state != null && this.state.tagList.map(function (tag, index) {
-                  var text = decodeURI(tag.search);
-                  var id = index + text;
-                  var tagId = "tag:" + id;
-                  var tagRemoveId = "tagRemove:" + id;
-                  if (text != "") return React.createElement(
-                    'span',
-                    { id: tagId, key: tagId, className: 'tag label' },
-                    text,
-                    React.createElement('span', { id: tagRemoveId, key: tagRemoveId, 'data-role': 'remove', onClick: this.removeTag.bind(this, text) })
-                  );
-                }, this)
+              /*#__PURE__*/ React.createElement(
+                "div",
+                {
+                  className: "bootstrap-tagsinput",
+                  id: "tagCollection"
+                },
+                this.state != null &&
+                  this.state.tagList.map(function (tag, index) {
+                    var text = decodeURI(tag.search);
+                    var id = index + text;
+                    var tagId = "tag:" + id;
+                    var tagRemoveId = "tagRemove:" + id;
+                    if (text != "")
+                      return /*#__PURE__*/ React.createElement(
+                        "span",
+                        {
+                          id: tagId,
+                          key: tagId,
+                          className: "tag label"
+                        },
+                        text,
+                        /*#__PURE__*/ React.createElement("span", {
+                          id: tagRemoveId,
+                          key: tagRemoveId,
+                          "data-role": "remove",
+                          onClick: this.removeTag.bind(this, text)
+                        })
+                      );
+                  }, this)
               )
             )
           )
@@ -153,15 +231,19 @@ var NavBox = React.createClass({
   }
 });
 var MainBox = React.createClass({
-  displayName: 'MainBox',
-
-  getInitialState: function getInitialState() {
-    return { data: undefined };
+  displayName: "MainBox",
+  getInitialState: function () {
+    return {
+      data: undefined
+    };
   },
-  fetchNewsFeeds: function fetchNewsFeeds(searchText) {
+  fetchNewsFeeds: function (searchText) {
     var _searchText = searchText;
+
     var _urlRequestSearchText = getURLRequestSearchText();
+
     var _sessionSearchText = getSessionSearchText();
+
     var _refreshSearch = getSessionRefreshSearch();
 
     if (isEmpty(searchText)) {
@@ -170,23 +252,28 @@ var MainBox = React.createClass({
       } else {
         _searchText = _sessionSearchText;
       }
-    }
-    //
+    } //
     // console.log("_refreshSearch:"+_refreshSearch);
     // console.log("searchText:"+searchText);
     // console.log("_urlRequestSearchText:"+_urlRequestSearchText);
     // console.log("_sessionSearchText:"+_sessionSearchText);
     // console.log("_searchText:"+_searchText);
-    var strUrl = isEmpty(_searchText) ? backendURL : backendURL + "?search=" + _searchText;
+
+    var loc = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    var locDetails = loc.split("/");
+    var country = locDetails.length >= 2 ? locDetails[1] : locDetails[0];
+    var strUrl = isEmpty(_searchText)
+      ? backendURL + "?search=" + country
+      : backendURL + "?search=" + _searchText; //console.log(strUrl);
 
     this.serverRequest = $.ajax({
       url: strUrl,
-      dataType: 'json',
+      dataType: "json",
       cache: true,
       timeout: 5000,
       success: function (data) {
         if (data.length > 0) {
-          if (!isUndefined(typeof localStorage === 'undefined' ? 'undefined' : _typeof(localStorage))) {
+          if (!isUndefined(typeof localStorage)) {
             try {
               localStorage.setItem("tfData", JSON.stringify(data));
               localStorage.setItem("tfLastSaved", new Date().getTime());
@@ -196,7 +283,10 @@ var MainBox = React.createClass({
               console.log(err.toString());
             }
           }
-          this.setState({ data: data });
+
+          this.setState({
+            data: data
+          });
           this.getNewsBoxData();
           this.getNavBoxData();
         } else {
@@ -208,64 +298,91 @@ var MainBox = React.createClass({
       }.bind(this)
     });
   },
-  componentDidMount: function componentDidMount() {
-    var currentTimestamp = new Date().getTime();
-    // console.log(window.localStorage);
+  componentDidMount: function () {
+    var currentTimestamp = new Date().getTime(); // console.log(window.localStorage);
+
     if (isOutdated(currentTimestamp)) {
       // console.log("outdated");
       this.fetchNewsFeeds();
     } else {
       // console.log("not outdated");
       var tfData = localStorage.getItem("tfData");
+
       if (tfData != null && isJSON(tfData)) {
-        this.setState({ data: JSON.parse(tfData) });
+        this.setState({
+          data: JSON.parse(tfData)
+        });
       } else {
         showErrorMsg("");
       }
     }
   },
-  componentWillUnmount: function componentWillUnmount() {
+  componentWillUnmount: function () {
     this.serverRequest.abort();
   },
-  getNewsBoxData: function getNewsBoxData() {
+  getNewsBoxData: function () {
     this.refs.newsBox.getData();
   },
-  getNavBoxData: function getNavBoxData() {
+  getNavBoxData: function () {
     this.refs.navBox.getData();
   },
-  render: function render() {
+  render: function () {
     if (this.state.data == undefined) {
-      return React.createElement(
-        'div',
+      return /*#__PURE__*/ React.createElement(
+        "div",
         null,
-        React.createElement(NavBox, { ref: 'navBox', callbackParent: this.fetchNewsFeeds })
+        /*#__PURE__*/ React.createElement(NavBox, {
+          ref: "navBox",
+          callbackParent: this.fetchNewsFeeds
+        })
       );
     } else {
-      return React.createElement(
-        'div',
+      return /*#__PURE__*/ React.createElement(
+        "div",
         null,
-        React.createElement(NavBox, { ref: 'navBox', callbackParent: this.fetchNewsFeeds }),
-        React.createElement(
-          'div',
-          { id: 'carousel-example-generic', className: 'carousel slide', 'data-ride': 'carousel', 'data-interval': 'false' },
-          React.createElement(
-            'ol',
-            { className: 'carousel-indicators' },
+        /*#__PURE__*/ React.createElement(NavBox, {
+          ref: "navBox",
+          callbackParent: this.fetchNewsFeeds
+        }),
+        /*#__PURE__*/ React.createElement(
+          "div",
+          {
+            id: "carousel-example-generic",
+            className: "carousel slide",
+            "data-ride": "carousel",
+            "data-interval": "false"
+          },
+          /*#__PURE__*/ React.createElement(
+            "ol",
+            {
+              className: "carousel-indicators"
+            },
             this.state.data.map(function (news, index) {
               var uniqueId = news.title.length;
               var handleUpdate = this.getNewsBoxData.bind(this, index);
               var carouselIndicatorsClassName = index == 0 ? "active" : " ";
-              var carouselIndicatorsKeyId = "carouselIndicatorsKeyId" + uniqueId + "_" + index;
-              return React.createElement('li', { 'data-target': '#carousel-example-generic', onClick: handleUpdate, 'data-slide-to': index, className: carouselIndicatorsClassName, key: carouselIndicatorsKeyId });
+              var carouselIndicatorsKeyId =
+                "carouselIndicatorsKeyId" + uniqueId + "_" + index;
+              return /*#__PURE__*/ React.createElement("li", {
+                "data-target": "#carousel-example-generic",
+                onClick: handleUpdate,
+                "data-slide-to": index,
+                className: carouselIndicatorsClassName,
+                key: carouselIndicatorsKeyId
+              });
             }, this)
           ),
-          React.createElement(
-            'div',
-            { className: 'carousel-inner', role: 'listbox' },
+          /*#__PURE__*/ React.createElement(
+            "div",
+            {
+              className: "carousel-inner",
+              role: "listbox"
+            },
             this.state.data.map(function (news, index) {
               var uniqueId = news.title.length;
               var indexId = uniqueId + "_" + index;
-              var carouselInnerDivClassName = index == 0 ? "item active" : "item";
+              var carouselInnerDivClassName =
+                index == 0 ? "item active" : "item";
               var parentDivId = "carouselInnerParentDivId" + indexId;
               var imageId = "carouselInnerImageId" + indexId;
               var divId = "carouselInnerDivId" + indexId;
@@ -274,181 +391,305 @@ var MainBox = React.createClass({
               var newsBgStyle = {
                 background: 'url("' + this.state.data[index].image + '")'
               };
-
-              return React.createElement(
-                'div',
-                { className: carouselInnerDivClassName, key: parentDivId },
-                React.createElement('img', { src: assetURL + "/images/spacer.png", height: '100%', width: '100%', key: imageId }),
-                React.createElement(
-                  'div',
-                  { key: divId },
-                  React.createElement('div', { id: 'newsBg', style: newsBgStyle, key: newsBgId }),
-                  React.createElement('div', { id: 'blackOverlay', key: blackOverlayId })
+              return /*#__PURE__*/ React.createElement(
+                "div",
+                {
+                  className: carouselInnerDivClassName,
+                  key: parentDivId
+                },
+                /*#__PURE__*/ React.createElement("img", {
+                  src: assetURL + "/images/spacer.png",
+                  height: "100%",
+                  width: "100%",
+                  key: imageId
+                }),
+                /*#__PURE__*/ React.createElement(
+                  "div",
+                  {
+                    key: divId
+                  },
+                  /*#__PURE__*/ React.createElement("div", {
+                    id: "newsBg",
+                    style: newsBgStyle,
+                    key: newsBgId
+                  }),
+                  /*#__PURE__*/ React.createElement("div", {
+                    id: "blackOverlay",
+                    key: blackOverlayId
+                  })
                 )
               );
             }, this)
           )
         ),
-        React.createElement(NewsBox, { ref: 'newsBox', data: this.state.data })
+        /*#__PURE__*/ React.createElement(NewsBox, {
+          ref: "newsBox",
+          data: this.state.data
+        })
       );
     }
   }
 });
-
 var NewsBox = React.createClass({
-  displayName: 'NewsBox',
+  displayName: "NewsBox",
+  getData: function () {
+    var nextIndex = $(".carousel").find(".active").index();
 
-  getData: function getData() {
-    var nextIndex = $('.carousel').find(".active").index();
     if (nextIndex == -1) {
       nextIndex = 0;
     }
-    this.setState({ index: nextIndex, currentData: this.props.data[nextIndex] });
+
+    this.setState({
+      index: nextIndex,
+      currentData: this.props.data[nextIndex]
+    });
   },
-  getInitialState: function getInitialState() {
-    return { index: 0, currentData: this.props.data[0] };
+  getInitialState: function () {
+    return {
+      index: 0,
+      currentData: this.props.data[0]
+    };
   },
-  updateMetaData: function updateMetaData() {
-    $("title").html(this.state.currentData.title);
-    //link
+  updateMetaData: function () {
+    $("title").html(this.state.currentData.title); //link
+
     $("link[rel='image_src']").attr("href", this.state.currentData.thumbnail);
-    $("link[rel='canonical']").attr("href", frontendURL + "/" + getSessionSearchText());
-    $("meta[name='description']").attr("content", this.state.currentData.description);
-    //open graph
+    $("link[rel='canonical']").attr(
+      "href",
+      frontendURL + "/" + getSessionSearchText()
+    );
+    $("meta[name='description']").attr(
+      "content",
+      this.state.currentData.description
+    ); //open graph
+
     $("meta[property='og:type']").attr("content", "website");
     $('meta[property="og:site_name"]').attr("content", "#TAGfeeds");
-    $('meta[property="og:title"]').attr("content", "#TAGfeeds: " + this.state.currentData.title);
-    $('meta[property="og:url"]').attr("content", frontendURL + "/" + getSessionSearchText());
-    $('meta[property="og:image"]').attr("content", this.state.currentData.thumbnail);
-    $('meta[property="og:description"]').attr("content", this.state.currentData.description);
-    $('meta[property="og:updated_time"]').attr("content", this.state.currentData.pubDate);
+    $('meta[property="og:title"]').attr(
+      "content",
+      "#TAGfeeds: " + this.state.currentData.title
+    );
+    $('meta[property="og:url"]').attr(
+      "content",
+      frontendURL + "/" + getSessionSearchText()
+    );
+    $('meta[property="og:image"]').attr(
+      "content",
+      this.state.currentData.thumbnail
+    );
+    $('meta[property="og:description"]').attr(
+      "content",
+      this.state.currentData.description
+    );
+    $('meta[property="og:updated_time"]').attr(
+      "content",
+      this.state.currentData.pubDate
+    );
     $('meta[imageprop="image"]')[0].content = this.state.currentData.thumbnail;
-    $('meta[itemprop="description"]')[0].content = this.state.currentData.description;
-    //twitter cards
-    $('meta[name="twitter:title"]').attr("content", "#TAGfeeds: " + this.state.currentData.title);
-    $('meta[name="twitter:description"]').attr("content", this.state.currentData.description);
-    $('meta[name="twitter:image"]').attr("content", this.state.currentData.thumbnail);
-    $('meta[name="twitter:image:src"]').attr("content", this.state.currentData.thumbnail);
+    $(
+      'meta[itemprop="description"]'
+    )[0].content = this.state.currentData.description; //twitter cards
+
+    $('meta[name="twitter:title"]').attr(
+      "content",
+      "#TAGfeeds: " + this.state.currentData.title
+    );
+    $('meta[name="twitter:description"]').attr(
+      "content",
+      this.state.currentData.description
+    );
+    $('meta[name="twitter:image"]').attr(
+      "content",
+      this.state.currentData.thumbnail
+    );
+    $('meta[name="twitter:image:src"]').attr(
+      "content",
+      this.state.currentData.thumbnail
+    );
   },
-  componentDidMount: function componentDidMount() {
+  componentDidMount: function () {
     var _this = this;
+
     $(function () {
-      $('body').keydown(function (e) {
+      $("body").keydown(function (e) {
         var keyPress = e.which;
+
         if (!isSearchInputFocused() && keyPress == 37) {
           $("#carousel-left").click();
+
           _this.getData();
         } else if (!isSearchInputFocused() && keyPress == 39) {
           $("#carousel-right").click();
+
           _this.getData();
         }
       });
     });
+
     _this.updateMetaData();
   },
-  componentDidUpdate: function componentDidUpdate() {
+  componentDidUpdate: function () {
     this.updateMetaData();
   },
-  render: function render() {
-    return React.createElement(
-      'div',
+  render: function () {
+    return /*#__PURE__*/ React.createElement(
+      "div",
       null,
-      React.createElement(
-        'div',
-        { id: 'newsFg', className: 'article' },
-        React.createElement(
-          'table',
-          { id: 'news' },
-          React.createElement(
-            'colgroup',
+      /*#__PURE__*/ React.createElement(
+        "div",
+        {
+          id: "newsFg",
+          className: "article"
+        },
+        /*#__PURE__*/ React.createElement(
+          "table",
+          {
+            id: "news"
+          },
+          /*#__PURE__*/ React.createElement(
+            "colgroup",
             null,
-            React.createElement('col', { className: 'table-col' }),
-            React.createElement('col', null),
-            React.createElement('col', { className: 'table-col' })
+            /*#__PURE__*/ React.createElement("col", {
+              className: "table-col"
+            }),
+            /*#__PURE__*/ React.createElement("col", null),
+            /*#__PURE__*/ React.createElement("col", {
+              className: "table-col"
+            })
           ),
-          React.createElement(
-            'tbody',
+          /*#__PURE__*/ React.createElement(
+            "tbody",
             null,
-            React.createElement(
-              'tr',
+            /*#__PURE__*/ React.createElement(
+              "tr",
               null,
-              React.createElement('td', null),
-              React.createElement(
-                'td',
-                { id: 'logoRow' },
-                React.createElement('img', { src: assetURL + "/images/logoTfMed.png" })
+              /*#__PURE__*/ React.createElement("td", null),
+              /*#__PURE__*/ React.createElement(
+                "td",
+                {
+                  id: "logoRow"
+                },
+                /*#__PURE__*/ React.createElement("img", {
+                  src: assetURL + "/images/logoTfMed.png"
+                })
               ),
-              React.createElement('td', null)
+              /*#__PURE__*/ React.createElement("td", null)
             ),
-            React.createElement(
-              'tr',
-              { id: 'newsSection' },
-              React.createElement(
-                'td',
+            /*#__PURE__*/ React.createElement(
+              "tr",
+              {
+                id: "newsSection"
+              },
+              /*#__PURE__*/ React.createElement(
+                "td",
                 null,
-                React.createElement('span', { className: 'glyphicon glyphicon-chevron-left glyphicon-padding', 'aria-hidden': 'true' })
+                /*#__PURE__*/ React.createElement("span", {
+                  className:
+                    "glyphicon glyphicon-chevron-left glyphicon-padding",
+                  "aria-hidden": "true"
+                })
               ),
-              React.createElement(
-                'td',
-                { id: 'newsRow' },
-                React.createElement(
-                  'div',
+              /*#__PURE__*/ React.createElement(
+                "td",
+                {
+                  id: "newsRow"
+                },
+                /*#__PURE__*/ React.createElement(
+                  "div",
                   null,
-                  React.createElement(
-                    'article',
+                  /*#__PURE__*/ React.createElement(
+                    "article",
                     null,
-                    React.createElement(
-                      'span',
-                      { id: 'newsTitle' },
-                      React.createElement(
-                        'a',
-                        { href: this.state.currentData.link, target: '_blank' },
+                    /*#__PURE__*/ React.createElement(
+                      "span",
+                      {
+                        id: "newsTitle"
+                      },
+                      /*#__PURE__*/ React.createElement(
+                        "a",
+                        {
+                          href: this.state.currentData.link,
+                          target: "_blank"
+                        },
                         this.state.currentData.title
                       )
                     ),
-                    React.createElement('br', null),
-                    React.createElement(
-                      'span',
-                      { id: 'newsSrc' },
+                    /*#__PURE__*/ React.createElement("br", null),
+                    /*#__PURE__*/ React.createElement(
+                      "span",
+                      {
+                        id: "newsSrc"
+                      },
                       this.state.currentData.newsSrc
                     ),
-                    React.createElement(
-                      'span',
-                      { id: 'newsDate' },
+                    /*#__PURE__*/ React.createElement(
+                      "span",
+                      {
+                        id: "newsDate"
+                      },
                       " - " + dateCooked(this.state.currentData.pubDate)
                     ),
-                    React.createElement('br', null),
-                    React.createElement(
-                      'span',
-                      { id: 'newsBody', className: 'article1' },
-                      React.createElement(
-                        'article1',
+                    /*#__PURE__*/ React.createElement("br", null),
+                    /*#__PURE__*/ React.createElement(
+                      "span",
+                      {
+                        id: "newsBody",
+                        className: "article1"
+                      },
+                      /*#__PURE__*/ React.createElement(
+                        "article1",
                         null,
                         this.state.currentData.description
                       )
                     )
                   ),
-                  React.createElement('br', null),
-                  React.createElement(
-                    'span',
-                    { id: 'apiProvider' },
-                    React.createElement('img', { src: assetURL + "/images/brandBing.png" })
+                  /*#__PURE__*/ React.createElement("br", null),
+                  /*#__PURE__*/ React.createElement(
+                    "span",
+                    {
+                      id: "apiProvider"
+                    },
+                    /*#__PURE__*/ React.createElement("img", {
+                      src: assetURL + "/images/brandBing.png"
+                    })
                   )
                 )
               ),
-              React.createElement(
-                'td',
+              /*#__PURE__*/ React.createElement(
+                "td",
                 null,
-                React.createElement('span', { className: 'glyphicon glyphicon-chevron-right glyphicon-padding', 'aria-hidden': 'true' })
+                /*#__PURE__*/ React.createElement("span", {
+                  className:
+                    "glyphicon glyphicon-chevron-right glyphicon-padding",
+                  "aria-hidden": "true"
+                })
               )
             )
           )
         )
       ),
-      React.createElement('a', { id: 'carousel-left', className: 'left carousel-control', href: '#carousel-example-generic', role: 'button', 'data-slide': 'prev', onClick: this.getData }),
-      React.createElement('a', { id: 'carousel-right', className: 'right carousel-control', href: '#carousel-example-generic', role: 'button', 'data-slide': 'next', onClick: this.getData })
+      /*#__PURE__*/ React.createElement("a", {
+        id: "carousel-left",
+        className: "left carousel-control",
+        href: "#carousel-example-generic",
+        role: "button",
+        "data-slide": "prev",
+        onClick: this.getData
+      }),
+      /*#__PURE__*/ React.createElement("a", {
+        id: "carousel-right",
+        className: "right carousel-control",
+        href: "#carousel-example-generic",
+        role: "button",
+        "data-slide": "next",
+        onClick: this.getData
+      })
     );
   }
 });
-
-ReactDOM.render(React.createElement(MainBox, { url: backendURL }), document.getElementById('content'));
+ReactDOM.render(
+  /*#__PURE__*/ React.createElement(MainBox, {
+    url: backendURL
+  }),
+  document.getElementById("content")
+);

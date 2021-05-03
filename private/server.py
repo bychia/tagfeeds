@@ -73,7 +73,7 @@ def preRequest_logging():
 @app.route('/newsBing', methods=['GET'])
 def newsBing_handler():
     strSearch = request.args.get('search');
-    strURL = STR_URL+"&q=Top+Stories" if (strSearch==None) else STR_URL+"&q="+strSearch;
+    strURL = STR_URL+"&q="+strSearch;
     strXml = urllib.urlopen(strURL).read()
     docXml = minidom.parseString(strXml)
     items = docXml.getElementsByTagName("item")
