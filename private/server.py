@@ -34,12 +34,16 @@ def parseUrl(url):
         return url
 
 
+def replace_with_https(url):
+    return url.replace("http://", "https://")
+
+
 def formatData(item):
     DEFAULT_IMAGEURL = "https://tagfeeds.com/images/newsTfMed.png"
-    imageUrl = "" if len(item.getElementsByTagName("News:Image"))==0 else item.getElementsByTagName("News:Image")[0].firstChild.nodeValue+STR_PICSIZE
-    thumbnailUrl = DEFAULT_IMAGEURL if len(item.getElementsByTagName("News:Image"))==0 else item.getElementsByTagName("News:Image")[0].firstChild.nodeValue+THUMBNAIL_PICSIZE
+    imageUrl = "" if len(item.getElementsByTagName("News:Image"))==0 else replace_with_https(item.getElementsByTagName("News:Image")[0].firstChild.nodeValue+STR_PICSIZE)
+    thumbnailUrl = DEFAULT_IMAGEURL if len(item.getElementsByTagName("News:Image"))==0 else replace_with_https(item.getElementsByTagName("News:Image")[0].firstChild.nodeValue+THUMBNAIL_PICSIZE)
     title = "" if len(item.getElementsByTagName("title"))==0 else item.getElementsByTagName("title")[0].firstChild.nodeValue
-    link = "" if len(item.getElementsByTagName("link"))==0 else item.getElementsByTagName("link")[0].firstChild.nodeValue
+    link = "" if len(item.getElementsByTagName("link"))==0 else replace_with_https(item.getElementsByTagName("link")[0].firstChild.nodeValue)
     description = "" if len(item.getElementsByTagName("description"))==0 else item.getElementsByTagName("description")[0].firstChild.nodeValue
     pubDate = "" if len(item.getElementsByTagName("pubDate"))==0 else item.getElementsByTagName("pubDate")[0].firstChild.nodeValue
     newsSrc = "" if len(item.getElementsByTagName("News:Source"))==0 else item.getElementsByTagName("News:Source")[0].firstChild.nodeValue

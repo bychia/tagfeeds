@@ -149,9 +149,12 @@ var MainBox = React.createClass({
     // console.log("_urlRequestSearchText:"+_urlRequestSearchText);
     // console.log("_sessionSearchText:"+_sessionSearchText);
     // console.log("_searchText:"+_searchText);
-    var loc = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    var locDetails = loc.split("/");
-    var country = (locDetails.length>=2)? locDetails[1] : locDetails[0];
+    var country = "US";
+    if (typeof(Intl) != "undefined") {
+         var loc = Intl.DateTimeFormat().resolvedOptions().timeZone;
+         var locDetails = loc.split("/");
+         country = (locDetails.length>=2)? locDetails[1] : locDetails[0];
+    }
 
     var strUrl = (isEmpty(_searchText))? backendURL+"?search="+country: backendURL+"?search="+_searchText;
 
