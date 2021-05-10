@@ -115,10 +115,10 @@ var infoMsg_LocalStorage = function(){
   }
 }
 
-var assetURL = "http://asset.tagfeeds.com";
+var assetURL = "https://tagfeeds.com";
 var localStorage = window.localStorage;
-var frontendURL = "http://www.tagfeeds.com";
-var backendURL = "http://api.tagfeeds.com/newsBing";
+var frontendURL = "https://www.tagfeeds.com";
+var backendURL = "https://api.tagfeeds.com/newsBing";
 var keyId = 0;
 updateSearchStorage();
 setTimeout(infoMsg_LocalStorage,1000);
