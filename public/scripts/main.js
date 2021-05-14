@@ -143,12 +143,7 @@ var MainBox = React.createClass({
         _searchText = _sessionSearchText;
       }
     }
-    //
-    // console.log("_refreshSearch:"+_refreshSearch);
-    // console.log("searchText:"+searchText);
-    // console.log("_urlRequestSearchText:"+_urlRequestSearchText);
-    // console.log("_sessionSearchText:"+_sessionSearchText);
-    // console.log("_searchText:"+_searchText);
+
     var country = "US";
     if (typeof(Intl) != "undefined") {
          var loc = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -303,6 +298,7 @@ var NewsBox = React.createClass({
     $('meta[name="twitter:image"]').attr("content", this.state.currentData.thumbnail);
     $('meta[name="twitter:image:src"]').attr("content", this.state.currentData.thumbnail);
   },
+
   componentDidMount: function(){
     var _this = this;
     $(function(){
@@ -316,6 +312,17 @@ var NewsBox = React.createClass({
             _this.getData();
           }
         });
+
+        $( "body" ).swipeleft(function(e){
+            $("#carousel-right").click();
+            _this.getData();
+        });
+
+        $( "body" ).swiperight(function(e){
+            $("#carousel-left").click();
+            _this.getData();
+        });
+
     });
     _this.updateMetaData();
   },

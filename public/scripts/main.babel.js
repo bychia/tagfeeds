@@ -5,24 +5,29 @@ var NavBox = React.createClass({
   getData: function () {
     var sessionSearchText = getSessionSearchText();
     var tagList =
-      sessionSearchText == null ? [undefined] : sessionSearchText.split(",");
+      sessionSearchText == undefined
+        ? [undefined]
+        : sessionSearchText.split(",");
     var tagListObj = [];
     var id = 0;
     tagList.forEach(function (text) {
       tagListObj[id++] = {
         search: text
       };
-    }),
-      this.setState({
-        tagList: tagListObj
-      });
+    });
+    this.setState({
+      tagList: tagListObj
+    });
   },
   removeTag: function (text) {
     var tagListObj = this.state.tagList;
 
     for (var i = 0; i < tagListObj.length; i++) {
       var tag = tagListObj[i];
-      tag.search === encodeURI(text) && tagListObj.splice(i, 1);
+
+      if (tag.search === encodeURI(text)) {
+        tagListObj.splice(i, 1);
+      }
     }
 
     this.setState({
@@ -31,72 +36,70 @@ var NavBox = React.createClass({
   },
   componentDidMount: function () {
     var main = this;
-    main.getData(),
-      $(function () {
-        // Implement the form post behavior
-        //trick to remove zoom in on mobile phone
-        $("#searchForm").submit(function () {
-          return false;
-        }),
-          $("#searchInput").keypress(function (e) {
-            // keyId++;
-            var _this = $(this);
+    main.getData();
+    $(function () {
+      $("#searchForm").submit(function () {
+        return false;
+      }); // Implement the form post behavior
 
-            if (e.keyCode == 13) {
-              // update the localStorage
-              var _searchText = _this.val();
+      $("#searchInput").keypress(function (e) {
+        // keyId++;
+        var _this = $(this);
 
-              _searchText == getURLRequestSearchText()
-                ? localStorage.setItem("tfRefreshSearch", false)
-                : localStorage.setItem("tfRefreshSearch", true);
-              // if(!isUndefined(history)){
-              //   // html5 pushState without forcing a refresh
-              //   _searchText = (isEmpty(_searchText))? "/": _searchText;
-              //   history.pushState(null,null,_searchText);
-              //   updateSearchStorage();
-              //
-              //   main.props.callbackParent(_this.val());
-              //   _this.blur();
-              //   var btnNavBarToggle = $("#navbar-toggle");
-              //   if(btnNavBarToggle.attr("class").indexOf("collapsed")==-1){
-              //     btnNavBarToggle.click(); //toggle navbar-toggle
-              //   }
-              // }else{
-              // not html5. Forcing a refresh
-              var winLocation = window.location.origin;
-              window.location.replace(winLocation + "/" + _searchText);
-            }
-          }),
-          $("#searchInput").mousedown(function () {
-            $("meta[name=viewport]").remove(),
-              $("head").append(
-                '<meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=0">'
-              );
-          }),
-          $("#searchInput").focusout(function () {
-            $("meta[name=viewport]").remove(),
-              $("head").append(
-                '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
-              );
-          }),
-          $('.has-clear input[type="text"]')
-            .on("input propertychange", function () {
-              var $this = $(this);
-              var visible = Boolean($this.val());
-              $this
-                .siblings(".form-control-clear")
-                .toggleClass("hidden", !visible);
-            })
-            .trigger("propertychange"),
-          $(".form-control-clear").click(function () {
-            $("#searchInput").mousedown(),
-              $(this)
-                .siblings('input[type="text"]')
-                .val("")
-                .trigger("propertychange")
-                .focus();
-          });
+        if (e.keyCode == 13) {
+          // update the localStorage
+          var _searchText = _this.val();
+
+          if (_searchText != getURLRequestSearchText())
+            localStorage.setItem("tfRefreshSearch", true);
+          else localStorage.setItem("tfRefreshSearch", false); // if(!isUndefined(history)){
+          //   // html5 pushState without forcing a refresh
+          //   _searchText = (isEmpty(_searchText))? "/": _searchText;
+          //   history.pushState(null,null,_searchText);
+          //   updateSearchStorage();
+          //
+          //   main.props.callbackParent(_this.val());
+          //   _this.blur();
+          //   var btnNavBarToggle = $("#navbar-toggle");
+          //   if(btnNavBarToggle.attr("class").indexOf("collapsed")==-1){
+          //     btnNavBarToggle.click(); //toggle navbar-toggle
+          //   }
+          // }else{
+          // not html5. Forcing a refresh
+
+          var winLocation = window.location.origin;
+          window.location.replace(winLocation + "/" + _searchText); // }
+        }
+      }); //trick to remove zoom in on mobile phone
+
+      $("#searchInput").mousedown(function () {
+        $("meta[name=viewport]").remove();
+        $("head").append(
+          '<meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=0">'
+        );
       });
+      $("#searchInput").focusout(function () {
+        $("meta[name=viewport]").remove();
+        $("head").append(
+          '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
+        );
+      });
+      $('.has-clear input[type="text"]')
+        .on("input propertychange", function () {
+          var $this = $(this);
+          var visible = Boolean($this.val());
+          $this.siblings(".form-control-clear").toggleClass("hidden", !visible);
+        })
+        .trigger("propertychange");
+      $(".form-control-clear").click(function () {
+        $("#searchInput").mousedown();
+        $(this)
+          .siblings('input[type="text"]')
+          .val("")
+          .trigger("propertychange")
+          .focus();
+      });
+    });
   },
   render: function () {
     return /*#__PURE__*/ React.createElement(
@@ -243,16 +246,14 @@ var MainBox = React.createClass({
 
     var _refreshSearch = getSessionRefreshSearch();
 
-    isEmpty(searchText) &&
-      (isEmpty(_urlRequestSearchText)
-        ? (_searchText = _sessionSearchText)
-        : (_searchText = _urlRequestSearchText));
-    //
-    // console.log("_refreshSearch:"+_refreshSearch);
-    // console.log("searchText:"+searchText);
-    // console.log("_urlRequestSearchText:"+_urlRequestSearchText);
-    // console.log("_sessionSearchText:"+_sessionSearchText);
-    // console.log("_searchText:"+_searchText);
+    if (isEmpty(searchText)) {
+      if (!isEmpty(_urlRequestSearchText)) {
+        _searchText = _urlRequestSearchText;
+      } else {
+        _searchText = _sessionSearchText;
+      }
+    }
+
     var country = "US";
 
     if (typeof Intl != "undefined") {
@@ -272,21 +273,25 @@ var MainBox = React.createClass({
       timeout: 5000,
       success: function (data) {
         if (data.length > 0) {
-          if (!isUndefined(typeof localStorage))
+          if (!isUndefined(typeof localStorage)) {
             try {
-              localStorage.setItem("tfData", JSON.stringify(data)),
-                localStorage.setItem("tfLastSaved", new Date().getTime()),
-                localStorage.setItem("tfSearchText", _searchText),
-                localStorage.setItem("tfRefreshSearch", false);
+              localStorage.setItem("tfData", JSON.stringify(data));
+              localStorage.setItem("tfLastSaved", new Date().getTime());
+              localStorage.setItem("tfSearchText", _searchText);
+              localStorage.setItem("tfRefreshSearch", false);
             } catch (err) {
               console.log(err.toString());
             }
+          }
+
           this.setState({
             data: data
-          }),
-            this.getNewsBoxData(),
-            this.getNavBoxData();
-        } else showErrorMsg(_searchText);
+          });
+          this.getNewsBoxData();
+          this.getNavBoxData();
+        } else {
+          showErrorMsg(_searchText);
+        }
       }.bind(this),
       error: function (xhr, status, err) {
         console.log(backendURL, status, err.toString());
@@ -296,17 +301,20 @@ var MainBox = React.createClass({
   componentDidMount: function () {
     var currentTimestamp = new Date().getTime(); // console.log(window.localStorage);
 
-    if (isOutdated(currentTimestamp))
+    if (isOutdated(currentTimestamp)) {
       // console.log("outdated");
       this.fetchNewsFeeds();
-    else {
+    } else {
       // console.log("not outdated");
       var tfData = localStorage.getItem("tfData");
-      tfData != null && isJSON(tfData)
-        ? this.setState({
-            data: JSON.parse(tfData)
-          })
-        : showErrorMsg("");
+
+      if (tfData != null && isJSON(tfData)) {
+        this.setState({
+          data: JSON.parse(tfData)
+        });
+      } else {
+        showErrorMsg("");
+      }
     }
   },
   componentWillUnmount: function () {
@@ -319,116 +327,122 @@ var MainBox = React.createClass({
     this.refs.navBox.getData();
   },
   render: function () {
-    return this.state.data == null
-      ? /*#__PURE__*/ React.createElement(
+    if (this.state.data == undefined) {
+      return /*#__PURE__*/ React.createElement(
+        "div",
+        null,
+        /*#__PURE__*/ React.createElement(NavBox, {
+          ref: "navBox",
+          callbackParent: this.fetchNewsFeeds
+        })
+      );
+    } else {
+      return /*#__PURE__*/ React.createElement(
+        "div",
+        null,
+        /*#__PURE__*/ React.createElement(NavBox, {
+          ref: "navBox",
+          callbackParent: this.fetchNewsFeeds
+        }),
+        /*#__PURE__*/ React.createElement(
           "div",
-          null,
-          /*#__PURE__*/ React.createElement(NavBox, {
-            ref: "navBox",
-            callbackParent: this.fetchNewsFeeds
-          })
-        )
-      : /*#__PURE__*/ React.createElement(
-          "div",
-          null,
-          /*#__PURE__*/ React.createElement(NavBox, {
-            ref: "navBox",
-            callbackParent: this.fetchNewsFeeds
-          }),
+          {
+            id: "carousel-example-generic",
+            className: "carousel slide",
+            "data-ride": "carousel",
+            "data-interval": "false"
+          },
+          /*#__PURE__*/ React.createElement(
+            "ol",
+            {
+              className: "carousel-indicators"
+            },
+            this.state.data.map(function (news, index) {
+              var uniqueId = news.title.length;
+              var handleUpdate = this.getNewsBoxData.bind(this, index);
+              var carouselIndicatorsClassName = index == 0 ? "active" : " ";
+              var carouselIndicatorsKeyId =
+                "carouselIndicatorsKeyId" + uniqueId + "_" + index;
+              return /*#__PURE__*/ React.createElement("li", {
+                "data-target": "#carousel-example-generic",
+                onClick: handleUpdate,
+                "data-slide-to": index,
+                className: carouselIndicatorsClassName,
+                key: carouselIndicatorsKeyId
+              });
+            }, this)
+          ),
           /*#__PURE__*/ React.createElement(
             "div",
             {
-              id: "carousel-example-generic",
-              className: "carousel slide",
-              "data-ride": "carousel",
-              "data-interval": "false"
+              className: "carousel-inner",
+              role: "listbox"
             },
-            /*#__PURE__*/ React.createElement(
-              "ol",
-              {
-                className: "carousel-indicators"
-              },
-              this.state.data.map(function (news, index) {
-                var uniqueId = news.title.length;
-                var handleUpdate = this.getNewsBoxData.bind(this, index);
-                var carouselIndicatorsClassName = index == 0 ? "active" : " ";
-                var carouselIndicatorsKeyId =
-                  "carouselIndicatorsKeyId" + uniqueId + "_" + index;
-                return /*#__PURE__*/ React.createElement("li", {
-                  "data-target": "#carousel-example-generic",
-                  onClick: handleUpdate,
-                  "data-slide-to": index,
-                  className: carouselIndicatorsClassName,
-                  key: carouselIndicatorsKeyId
-                });
-              }, this)
-            ),
-            /*#__PURE__*/ React.createElement(
-              "div",
-              {
-                className: "carousel-inner",
-                role: "listbox"
-              },
-              this.state.data.map(function (news, index) {
-                var uniqueId = news.title.length;
-                var indexId = uniqueId + "_" + index;
-                var carouselInnerDivClassName =
-                  index == 0 ? "item active" : "item";
-                var parentDivId = "carouselInnerParentDivId" + indexId;
-                var imageId = "carouselInnerImageId" + indexId;
-                var divId = "carouselInnerDivId" + indexId;
-                var newsBgId = "carouselInnerNewsBg" + indexId;
-                var blackOverlayId = "carouselInnerBlackOverlay" + indexId;
-                var newsBgStyle = {
-                  background: 'url("' + this.state.data[index].image + '")'
-                };
-                return /*#__PURE__*/ React.createElement(
+            this.state.data.map(function (news, index) {
+              var uniqueId = news.title.length;
+              var indexId = uniqueId + "_" + index;
+              var carouselInnerDivClassName =
+                index == 0 ? "item active" : "item";
+              var parentDivId = "carouselInnerParentDivId" + indexId;
+              var imageId = "carouselInnerImageId" + indexId;
+              var divId = "carouselInnerDivId" + indexId;
+              var newsBgId = "carouselInnerNewsBg" + indexId;
+              var blackOverlayId = "carouselInnerBlackOverlay" + indexId;
+              var newsBgStyle = {
+                background: 'url("' + this.state.data[index].image + '")'
+              };
+              return /*#__PURE__*/ React.createElement(
+                "div",
+                {
+                  className: carouselInnerDivClassName,
+                  key: parentDivId
+                },
+                /*#__PURE__*/ React.createElement("img", {
+                  src: assetURL + "/images/spacer.png",
+                  height: "100%",
+                  width: "100%",
+                  key: imageId
+                }),
+                /*#__PURE__*/ React.createElement(
                   "div",
                   {
-                    className: carouselInnerDivClassName,
-                    key: parentDivId
+                    key: divId
                   },
-                  /*#__PURE__*/ React.createElement("img", {
-                    src: assetURL + "/images/spacer.png",
-                    height: "100%",
-                    width: "100%",
-                    key: imageId
+                  /*#__PURE__*/ React.createElement("div", {
+                    id: "newsBg",
+                    style: newsBgStyle,
+                    key: newsBgId
                   }),
-                  /*#__PURE__*/ React.createElement(
-                    "div",
-                    {
-                      key: divId
-                    },
-                    /*#__PURE__*/ React.createElement("div", {
-                      id: "newsBg",
-                      style: newsBgStyle,
-                      key: newsBgId
-                    }),
-                    /*#__PURE__*/ React.createElement("div", {
-                      id: "blackOverlay",
-                      key: blackOverlayId
-                    })
-                  )
-                );
-              }, this)
-            )
-          ),
-          /*#__PURE__*/ React.createElement(NewsBox, {
-            ref: "newsBox",
-            data: this.state.data
-          })
-        );
+                  /*#__PURE__*/ React.createElement("div", {
+                    id: "blackOverlay",
+                    key: blackOverlayId
+                  })
+                )
+              );
+            }, this)
+          )
+        ),
+        /*#__PURE__*/ React.createElement(NewsBox, {
+          ref: "newsBox",
+          data: this.state.data
+        })
+      );
+    }
   }
 });
 var NewsBox = React.createClass({
   displayName: "NewsBox",
   getData: function () {
     var nextIndex = $(".carousel").find(".active").index();
-    nextIndex == -1 && (nextIndex = 0),
-      this.setState({
-        index: nextIndex,
-        currentData: this.props.data[nextIndex]
-      });
+
+    if (nextIndex == -1) {
+      nextIndex = 0;
+    }
+
+    this.setState({
+      index: nextIndex,
+      currentData: this.props.data[nextIndex]
+    });
   },
   getInitialState: function () {
     return {
@@ -437,61 +451,60 @@ var NewsBox = React.createClass({
     };
   },
   updateMetaData: function () {
-    //link
-    //open graph
-    //twitter cards
-    $("title").html(this.state.currentData.title),
-      $("link[rel='image_src']").attr("href", this.state.currentData.thumbnail),
-      $("link[rel='canonical']").attr(
-        "href",
-        frontendURL + "/" + getSessionSearchText()
-      ),
-      $("meta[name='description']").attr(
-        "content",
-        this.state.currentData.description
-      ),
-      $("meta[property='og:type']").attr("content", "website"),
-      $('meta[property="og:site_name"]').attr("content", "#TAGfeeds"),
-      $('meta[property="og:title"]').attr(
-        "content",
-        "#TAGfeeds: " + this.state.currentData.title
-      ),
-      $('meta[property="og:url"]').attr(
-        "content",
-        frontendURL + "/" + getSessionSearchText()
-      ),
-      $('meta[property="og:image"]').attr(
-        "content",
-        this.state.currentData.thumbnail
-      ),
-      $('meta[property="og:description"]').attr(
-        "content",
-        this.state.currentData.description
-      ),
-      $('meta[property="og:updated_time"]').attr(
-        "content",
-        this.state.currentData.pubDate
-      ),
-      ($('meta[imageprop="image"]')[0].content =
-        this.state.currentData.thumbnail),
-      ($('meta[itemprop="description"]')[0].content =
-        this.state.currentData.description),
-      $('meta[name="twitter:title"]').attr(
-        "content",
-        "#TAGfeeds: " + this.state.currentData.title
-      ),
-      $('meta[name="twitter:description"]').attr(
-        "content",
-        this.state.currentData.description
-      ),
-      $('meta[name="twitter:image"]').attr(
-        "content",
-        this.state.currentData.thumbnail
-      ),
-      $('meta[name="twitter:image:src"]').attr(
-        "content",
-        this.state.currentData.thumbnail
-      );
+    $("title").html(this.state.currentData.title); //link
+
+    $("link[rel='image_src']").attr("href", this.state.currentData.thumbnail);
+    $("link[rel='canonical']").attr(
+      "href",
+      frontendURL + "/" + getSessionSearchText()
+    );
+    $("meta[name='description']").attr(
+      "content",
+      this.state.currentData.description
+    ); //open graph
+
+    $("meta[property='og:type']").attr("content", "website");
+    $('meta[property="og:site_name"]').attr("content", "#TAGfeeds");
+    $('meta[property="og:title"]').attr(
+      "content",
+      "#TAGfeeds: " + this.state.currentData.title
+    );
+    $('meta[property="og:url"]').attr(
+      "content",
+      frontendURL + "/" + getSessionSearchText()
+    );
+    $('meta[property="og:image"]').attr(
+      "content",
+      this.state.currentData.thumbnail
+    );
+    $('meta[property="og:description"]').attr(
+      "content",
+      this.state.currentData.description
+    );
+    $('meta[property="og:updated_time"]').attr(
+      "content",
+      this.state.currentData.pubDate
+    );
+    $('meta[imageprop="image"]')[0].content = this.state.currentData.thumbnail;
+    $('meta[itemprop="description"]')[0].content =
+      this.state.currentData.description; //twitter cards
+
+    $('meta[name="twitter:title"]').attr(
+      "content",
+      "#TAGfeeds: " + this.state.currentData.title
+    );
+    $('meta[name="twitter:description"]').attr(
+      "content",
+      this.state.currentData.description
+    );
+    $('meta[name="twitter:image"]').attr(
+      "content",
+      this.state.currentData.thumbnail
+    );
+    $('meta[name="twitter:image:src"]').attr(
+      "content",
+      this.state.currentData.thumbnail
+    );
   },
   componentDidMount: function () {
     var _this = this;
@@ -499,14 +512,30 @@ var NewsBox = React.createClass({
     $(function () {
       $("body").keydown(function (e) {
         var keyPress = e.which;
-        isSearchInputFocused() || keyPress != 37
-          ? !isSearchInputFocused() &&
-            keyPress == 39 &&
-            ($("#carousel-right").click(), _this.getData())
-          : ($("#carousel-left").click(), _this.getData());
+
+        if (!isSearchInputFocused() && keyPress == 37) {
+          $("#carousel-left").click();
+
+          _this.getData();
+        } else if (!isSearchInputFocused() && keyPress == 39) {
+          $("#carousel-right").click();
+
+          _this.getData();
+        }
       });
-    }),
-      _this.updateMetaData();
+      $("body").swipeleft(function (e) {
+        $("#carousel-right").click();
+
+        _this.getData();
+      });
+      $("body").swiperight(function (e) {
+        $("#carousel-left").click();
+
+        _this.getData();
+      });
+    });
+
+    _this.updateMetaData();
   },
   componentDidUpdate: function () {
     this.updateMetaData();

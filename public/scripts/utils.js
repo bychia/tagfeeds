@@ -1,4 +1,5 @@
-function detectSwipe(el,func) {
+function detectSwipe(el,func,cxt) {
+   console.log("detectSwipe");
   swipe_det = new Object();
   swipe_det.sX = 0; swipe_det.sY = 0; swipe_det.eX = 0; swipe_det.eY = 0;
   var min_x = 30;  //min x swipe for horizontal swipe
@@ -31,19 +32,21 @@ function detectSwipe(el,func) {
     }
 
     if (direc != "") {
-      if(typeof func == 'function') func(el,direc);
+      if(typeof func == 'function') func(el,direc,cxt);
     }
     direc = "";
     swipe_det.sX = 0; swipe_det.sY = 0; swipe_det.eX = 0; swipe_det.eY = 0;
   },false);
 }
 
-function swipeAction(el,d) {
+function swipeAction(el,d,cxt) {
+  console.log("you swiped on element with id '"+el+"' to "+d+" direction");
   if(d === 'r'){
     $("#carousel-left").click();
   }else if(d === 'l'){
     $("#carousel-right").click();
   }
+  cxt.getData();
 }
 
 var dateCooked = function(pubDateStr){
@@ -164,9 +167,71 @@ var infoMsg_LocalStorage = function(){
 }
 
 var assetURL = "https://tagfeeds.com";
-var localStorage = window.localStorage;
 var frontendURL = "https://www.tagfeeds.com";
 var backendURL = "https://api.tagfeeds.com/newsBing";
 var keyId = 0;
+var localStorage = window.localStorage;
 updateSearchStorage();
 setTimeout(infoMsg_LocalStorage,1000);
+
+const eventListenerOptionsSupported = () => {
+  let supported = false;
+
+  try {
+    const opts = Object.defineProperty({}, 'passive', {
+      get() {
+        supported = true;
+      }
+    });
+
+    window.addEventListener('test', null, opts);
+    window.removeEventListener('test', null, opts);
+  } catch (e) {}
+
+  return supported;
+}
+
+const defaultOptions = {
+  passive: false,
+  capture: false
+};
+const supportedPassiveTypes = [
+  'scroll', 'wheel',
+  'touchstart', 'touchmove', 'touchenter', 'touchend', 'touchleave',
+  'mouseout', 'mouseleave', 'mouseup', 'mousedown', 'mousemove', 'mouseenter', 'mousewheel', 'mouseover'
+];
+const getDefaultPassiveOption = (passive, eventName) => {
+  if (passive !== undefined) return passive;
+
+  return supportedPassiveTypes.indexOf(eventName) === -1 ? false : defaultOptions.passive;
+};
+
+const getWritableOptions = (options) => {
+  const passiveDescriptor = Object.getOwnPropertyDescriptor(options, 'passive');
+
+  return passiveDescriptor && passiveDescriptor.writable !== true && passiveDescriptor.set === undefined
+    ? Object.assign({}, options)
+    : options;
+};
+
+const overwriteAddEvent = (superMethod) => {
+  EventTarget.prototype.addEventListener = function (type, listener, options) {
+    const usesListenerOptions = typeof options === 'object' && options !== null;
+    const useCapture          = usesListenerOptions ? options.capture : options;
+
+    options         = usesListenerOptions ? getWritableOptions(options) : {};
+    options.passive = getDefaultPassiveOption(options.passive, type);
+    options.capture = useCapture === undefined ? defaultOptions.capture : useCapture;
+
+    superMethod.call(this, type, listener, options);
+  };
+
+  EventTarget.prototype.addEventListener._original = superMethod;
+};
+
+const supportsPassive = eventListenerOptionsSupported();
+
+if (supportsPassive) {
+  const addEvent = EventTarget.prototype.addEventListener;
+  overwriteAddEvent(addEvent);
+}
